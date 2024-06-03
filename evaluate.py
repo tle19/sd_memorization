@@ -46,7 +46,7 @@ print('Initialized', prompt_type, 'directory')
 # Image and Prompt Generation
 generate_images(model_id, prompts, sd_folder_path1)
 # generated_prompts = generate_prompts()
-# generate_images(model_id, prompt_type, generated_prompts, sd_folder_path2)
+# generate_images(model_id, generated_prompts, sd_folder_path2)
 
 # metric calculation
 for i in range(len(prompts)):
