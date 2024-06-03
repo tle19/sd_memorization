@@ -4,7 +4,7 @@ from diffusers import StableDiffusionPipeline
 import pandas as pd
 import os
 
-def generate_images(model_id, prompt_type, prompts):
+def generate_images(model_id, prompts, sd_folder_path1):
     
     pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)
 
@@ -17,7 +17,7 @@ def generate_images(model_id, prompt_type, prompts):
     for prompt in prompts:
         print('IMAGE', counter, ':')
         image = pipe(prompt).images[0]  
-        image_path = os.path.join('output/', prompt_type, 'images', counter + '.png')
+        image_path = os.path.join(sd_folder_path1, counter + '.png')
         image.save(image_path)
 
         start_val += 1
