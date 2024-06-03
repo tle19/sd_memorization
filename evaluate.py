@@ -5,6 +5,10 @@ import numpy as np
 from diffusers import StableDiffusionPipeline
 import pandas as pd
 import shutil
+from utils import euclidean
+from image_generation import generate_images
+# from prompt_generation import generate_prompts
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="SD Image Generation")
@@ -16,34 +20,31 @@ def parse_args():
 
 args = parse_args()
 
-# Device
 model_id = args.model_id
-device = 'cuda'
-
-# Pipeline
-pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
-# pipe.safety_checker = lambda images, clip_input: (images, False)
-pipe = pipe.to(device)
-
-# Prompt Generation
 prompt_type = args.prompt
+
+# Compiling Prompts
 tsv_file_path = os.path.join('/home/tyler/people_data/modified/', prompt_type + '.tsv')
-prompts_df = pd.read_csv(tsv_file_path, sep='\t')
+prompts_df = pd.read_csv(tsv_file_path, sep='\t').sample(10)
 prompts = prompts_df.values.tolist()
 
+# Directory Initilization
 output_path = os.path.join('output/', prompt_type)
 if os.path.exists(output_path):
     shutil.rmtree(output_path)
-image_folder_path = os.path.join(output_path, 'images')
-os.makedirs(image_folder_path)
+
+sd_folder_path = os.path.join(output_path, 'images')
+blip_folder_path = os.path.join(output_path, 'annotations')
+os.makedirs(sd_folder_path)
+os.makedirs(blip_folder_path)
 print('Initialized', prompt_type, 'directory')
 
-start_val = 0
-counter = '{:0{width}d}'.format(0, width=8)
-for prompt in prompts:
-    image = pipe(prompt).images[0]  
-    image_path = os.path.join('output/', prompt_type, 'images', counter + '.png')
-    image.save(image_path)
+# Image and Prompt Generation
+generate_images(model_id, prompt_type, prompts)
+# generate_prompts()
 
-    start_val += 1
-    counter = '{:0{width}d}'.format(start_val, width=8)
+# metric calculation
+for i in range(len(prompts)):
+    x = 'output/popular_actors/images/00000001.png'
+    y = 'output/popular_actors/images/00000002.png'
+    euclidean(x, y)
