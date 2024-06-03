@@ -1,7 +1,5 @@
 import torch
-import numpy as np
 from diffusers import StableDiffusionPipeline
-import pandas as pd
 import os
 
 def generate_images(model_id, prompts, sd_folder_path1):
