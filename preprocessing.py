@@ -2,7 +2,6 @@ import pandas as pd
 import os
 
 
-
 # Open IMDB dataset
 tsv_file_path = '/home/tyler/people_data/original/name.basics.tsv'
 imdb = pd.read_csv(tsv_file_path, sep='\t')
