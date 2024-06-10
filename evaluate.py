@@ -3,20 +3,20 @@ import argparse
 import os
 import pandas as pd
 
-def str_to_metric(metric_str):
+def metric(func):
     metric_functions = {
         "euclidean": euclidean_func,
         "manhattan": manhattan_func,
     }
     
-    if metric_str in metric_functions:
-        return metric_functions[metric_str]
+    if func in metric_functions:
+        return metric_functions[func]
     else:
         raise argparse.ArgumentTypeError("Invalid metric provided")
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Memorization Metrics")
-    parser.add_argument('--metric', type=str_to_metric, default="euclidean")
+    parser.add_argument('--metric', type=metric, default="euclidean")
     parser.add_argument('--prompt', type=str, default="popular_actors")
     args = parser.parse_args()
     return args
@@ -26,18 +26,22 @@ args = parse_args()
 eval_metric = args.metric
 prompt_type = args.prompt
 
-csv_file_path = os.path.join('output/', prompt_type, 'prompts.tsv')
 
-generated_prompts_df = pd.read_csv(csv_file_path)
-generated_prompts = generated_prompts_df.iloc[:, 3].values.tolist()
+csv_path = os.path.join('output/', prompt_type, 'prompts.csv')
+prompts_df = pd.read_csv(csv_path)
+generated_prompts = prompts_df['Name'].tolist()
 
-def metric():
+distances = []
+for prompt in generated_prompts:
+    path = os.path.join('output/', prompt_type)
+    x = os.path.join(path, 'images1', prompt + '.png')
+    y = os.path.join(path, 'images2', prompt + '.png')
     
-    for prompt in generated_prompts:
-        loc = os.path.join('output/', prompt_type)
-        x = os.path.join(loc, 'images1', prompt + '.png')
-        y = os.path.join(loc, 'images2', prompt + '.png')
-        print(prompt, ':')
-        euclidean_func(x, y)
+    dist = eval_metric(x, y)
+    distances.append(dist)
 
-metric()
+    print(prompt, ':')
+    print(dist)
+
+prompts_df['Metric'] = distances
+prompts_df.to_csv(csv_path)
