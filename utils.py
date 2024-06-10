@@ -1,7 +1,6 @@
 import numpy as np
 from PIL import Image
 import pandas as pd
-import os
 
 
 def euclidean_func(x, y):
@@ -26,7 +25,7 @@ def manhattan_func(x, y):
 
     return distance
 
-
+#implement cosine, FID, manhattan, etc.
 
 def convert_file(tsv_file):
 

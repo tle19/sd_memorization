@@ -25,7 +25,7 @@ prompt_type = args.prompt
 # Compiling Prompts
 imdb_preprocessing()
 data_path = os.path.join('/home/tyler/datasets/imdb/', prompt_type + '.csv')
-prompts_df = pd.read_csv(data_path).sample(100) #sampling 5 prompts for easy computation
+prompts_df = pd.read_csv(data_path).sample(10) #sampling 5 prompts for easy computation
 prompts = prompts_df['Name'].tolist()
 
 # Directory Initilization
