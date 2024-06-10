@@ -7,20 +7,10 @@ from image_generation import generate_images, sd_model
 from utils import imdb_preprocessing
 from prompt_generation import generate_prompts, blip_model
 
-def metric(func):
-    metric_functions = {
-        "euclidean": euclidean_func,
-        "manhattan": manhattan_func,
-    }
-    
-    if func in metric_functions:
-        return metric_functions[func]
-    else:
-        raise argparse.ArgumentTypeError("Invalid metric provided")
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Image & Prompt Generation")
-    parser.add_argument('--sd_model', type=str, default="CompVis/stable-diffusion-v1-4")
+    parser.add_argument('--sd_model', type=str, default="runwayml/stable-diffusion-v1-5")
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--prompt', type=str, default="popular_actors")
     args = parser.parse_args()
@@ -35,7 +25,7 @@ prompt_type = args.prompt
 # Compiling Prompts
 imdb_preprocessing()
 data_path = os.path.join('/home/tyler/datasets/imdb/', prompt_type + '.csv')
-prompts_df = pd.read_csv(data_path).sample(5) #sampling 5 prompts for easy computation
+prompts_df = pd.read_csv(data_path).sample(100) #sampling 5 prompts for easy computation
 prompts = prompts_df['Name'].tolist()
 
 # Directory Initilization
