@@ -43,5 +43,7 @@ for prompt in generated_prompts:
     print(prompt, ':')
     print(dist)
 
+print('Closest', min(distances)) #sanity check
+
 prompts_df['Metric'] = distances
 prompts_df.to_csv(csv_path)
