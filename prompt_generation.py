@@ -9,11 +9,10 @@ processor = None
 model = None
 
 def blip_model(model_id):
-    global processor, model
-    processor = Blip2Processor.from_pretrained(model_id)
+    global model, processor
     model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16)
+    processor = Blip2Processor.from_pretrained(model_id)
     model.to(device)
-
 
 def generate_prompts(prompts, path, output_path):
 

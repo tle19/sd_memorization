@@ -1,31 +1,20 @@
-import numpy as np
 from PIL import Image
 import pandas as pd
+import numpy as np
 
+def open_image(path):
+    return Image.open(path)
 
-def euclidean_func(x, y):
-    image1 = Image.open(x)
-    image2 = Image.open(y)
+def euclidean_distance(x, y):
+    return np.linalg.norm(x - y)
 
-    vec1 = np.array(image1).flatten()
-    vec2 = np.array(image2).flatten()
+def manhattan_distance(x, y):
+    return np.sum(np.abs(x - y))
 
-    distance = np.linalg.norm(vec1 - vec2)
+def cosine_similarity(x, y):
+    return (np.dot(x, y.T) / (euclidean_distance(x, 0) * euclidean_distance(y, 0)))[0][0]
 
-    return distance
-
-def manhattan_func(x, y):
-    image1 = Image.open(x)
-    image2 = Image.open(y)
-
-    vec1 = np.array(image1).flatten()
-    vec2 = np.array(image2).flatten()
-
-    distance = np.linalg.norm(vec1 - vec2)
-
-    return distance
-
-#implement cosine, FID, manhattan, etc.
+#implement, FID, etc.
 
 def convert_file(tsv_file):
 

@@ -3,9 +3,9 @@ import os
 import numpy as np
 import pandas as pd
 import shutil
-from image_generation import generate_images, sd_model
+from image_generation import *
+from prompt_generation import *
 from utils import imdb_preprocessing
-from prompt_generation import generate_prompts, blip_model
 
     
 def parse_args():
