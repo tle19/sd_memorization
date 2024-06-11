@@ -14,7 +14,7 @@ def manhattan_distance(x, y):
 def cosine_similarity(x, y):
     return (np.dot(x, y.T) / (euclidean_distance(x, 0) * euclidean_distance(y, 0)))[0][0]
 
-#implement, FID, etc.
+#implement FID?
 
 def convert_file(tsv_file):
 
@@ -36,5 +36,4 @@ def imdb_preprocessing():
     print('Number of Popular Actors: ', pop_actors.shape[0])
 
     new_path = '/home/tyler/datasets/imdb/popular_actors.csv'
-
     pop_actors.to_csv(new_path, index=False)

@@ -27,11 +27,11 @@ def parse_args():
     return args
 
 args = parse_args()
-
 eval_metric = args.metric
 prompt_type = args.prompt
 model_id = args.model_id
 
+# Load CLIP Model
 model = CLIPModel.from_pretrained(model_id)
 processor = CLIPProcessor.from_pretrained(model_id)
 
@@ -42,16 +42,18 @@ generated_prompts = prompts_df['Name'].tolist()
 distances = []
 for prompt in generated_prompts:
     path = os.path.join('output/', prompt_type)
-    
+
     x = os.path.join(path, 'images1', prompt + '.png')
     y = os.path.join(path, 'images2', prompt + '.png')
     
     image_x = open_image(x)
     image_y = open_image(y)
 
+    # Image Embeddings
     inputs_x = processor(images=image_x, return_tensors="pt")
     inputs_y = processor(images=image_y, return_tensors="pt")
-    
+
+    # Image Features
     with torch.no_grad():
         image_features1 = model.get_image_features(**inputs_x).numpy()
         image_features2 = model.get_image_features(**inputs_y).numpy()
@@ -62,11 +64,11 @@ for prompt in generated_prompts:
     print(prompt, ':')
     print(dist)
 
-# additional metrics
-print('    \033[1m' + eval_metric.__name__ + '\033[0m')
-print('Avg:', np.mean(distances))
-print('Max:', np.max(distances))
-print('Min:', np.min(distances))
-
 prompts_df['Metric'] = distances
 prompts_df.to_csv(csv_path)
+
+# additional metrics
+print('   \033[1m' + eval_metric.__name__ + '\033[0m')
+print('  Avg:', np.mean(distances))
+print('  Max:', np.max(distances))
+print('  Min:', np.min(distances))

@@ -17,7 +17,6 @@ def parse_args():
     return args
 
 args = parse_args()
-
 sd_id = args.sd_model
 blip_id = args.blip_model
 prompt_type = args.prompt
@@ -45,10 +44,11 @@ os.makedirs(sd_folder_path2)
 
 print('Initialized', prompt_type, 'directory')
 
-# Image and Prompt Generation
+# Load SD & BLIP Models
 sd_model(sd_id)
 blip_model(blip_id)
 
+# Image and Prompt Generation
 generate_images(prompts, prompts, sd_folder_path1)
 
 generated_prompts = generate_prompts(prompts, sd_folder_path1, output_path)
