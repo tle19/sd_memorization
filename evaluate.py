@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from transformers import CLIPModel, CLIPProcessor
 from PIL import Image
-from utils import *
+from utils import euclidean_distance, manhattan_distance, cosine_similarity, fid_distance
 
 def metric(func):
     metric_functions = {
