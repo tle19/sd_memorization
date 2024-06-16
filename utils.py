@@ -15,30 +15,15 @@ def fid_distance(x, y):
     pass
     #implement FID
 
-def imdb_preprocessing():
-
-    tsv_file = '/home/tyler/datasets/imdb/name.basics.tsv'
-    tsv_to_csv(tsv_file)
-    csv_file = '/home/tyler/datasets/imdb/name.basics.csv'
-
-    imdb = pd.read_csv(csv_file)
-    imdb = pd.DataFrame(imdb)
-    imdb = imdb.rename(columns={'primaryName': 'Name'})
-    pop_actors = imdb[['Name']]
-
-    print('Number of Actors: ', pop_actors.shape[0])
-    
-    new_path = '/home/tyler/datasets/imdb/popular_actors.csv'
-    pop_actors.to_csv(new_path, index=False)
-
-# VoxCeleb, EveryPolitican, MusicBrainz datasets
-
 def preprocessing(dataset):
     dataset_path = os.path.join('/home/tyler/datasets/' + dataset)
     csv_path = find_file(dataset_path)
     target = dataset_convert(dataset)
-    if csv_path.contains('.tsv'):
-        csv_path = tsv_to_csv()
+    new_path = os.path.join(dataset_path, target + '.csv')
+    if os.path.exists(new_path):
+        return
+    if '.tsv' in csv_path:
+        csv_path = tsv_to_csv(csv_path)
 
     csv_file = pd.read_csv(csv_path)
     df = pd.DataFrame(csv_file)
@@ -47,8 +32,7 @@ def preprocessing(dataset):
     df = df[['Name']]
 
     print('Number of ' + target + ': ', df.shape[0])
-
-    new_path = os.path.join(dataset_path, target + '.csv')
+    
     df.to_csv(new_path, index=False)
     return new_path
 
@@ -63,6 +47,7 @@ def find_file(dataset_path):
         raise ValueError('No CSV file located')
 
 def dataset_convert(dataset):
+    # IMDB, VoxCeleb, EveryPolitican, MusicBrainz
     datasets = {
         'imdb': 'actors',
         'voxceleb': 'celebrities',
@@ -88,4 +73,7 @@ def column_name(dataset):
         'musicbrainz': 'artist_mb'
     }
     if dataset in datasets:
-        return dataset
+        return datasets[dataset]
+    
+def generate_graph():
+    pass

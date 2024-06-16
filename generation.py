@@ -4,13 +4,13 @@ import pandas as pd
 import shutil
 from image_generation import *
 from prompt_generation import *
-from utils import imdb_preprocessing
+from utils import preprocessing
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Image & Prompt Generation")
     parser.add_argument('--sd_model', type=str, default="runwayml/stable-diffusion-v1-5")
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
-    parser.add_argument('--dataset', type=str, default="popular_actors")
+    parser.add_argument('--dataset', type=str, default="imdb")
     args = parser.parse_args()
     return args
 
@@ -20,10 +20,8 @@ blip_id = args.blip_model
 dataset = args.dataset
 
 # Compiling Prompts
-# dataset_path = preprocessing(dataset)
-imdb_preprocessing()
-dataset_path = os.path.join('/home/tyler/datasets/imdb/', dataset + '.csv')
-prompts_df = pd.read_csv(dataset_path).sample(10) #sampling 10 prompts for easy computation
+dataset_path = preprocessing(dataset)
+prompts_df = pd.read_csv(dataset_path).sample(1) #sampling 10 prompts for easy computation
 prompts = prompts_df['Name'].tolist()
 
 # Directory Initilization

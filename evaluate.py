@@ -24,7 +24,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Memorization Metrics")
     parser.add_argument('--model_id', type=str, default="openai/clip-vit-base-patch32")
     parser.add_argument('--metric', type=metric, default="cosine")
-    parser.add_argument('--dataset', type=str, default="popular_actors")
+    parser.add_argument('--dataset', type=str, default="imdb")
     args = parser.parse_args()
     return args
 
