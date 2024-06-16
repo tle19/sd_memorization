@@ -35,11 +35,11 @@ os.makedirs(output_path)
 csv_file_path = os.path.join(output_path, 'prompts.csv')
 prompts_df.to_csv(csv_file_path)
 
-sd_folder_path1 = os.path.join(output_path, 'images1')
-sd_folder_path2 = os.path.join(output_path, 'images2')
+image_folder1 = os.path.join(output_path, 'images1')
+image_folder2 = os.path.join(output_path, 'images2')
 
-os.makedirs(sd_folder_path1)
-os.makedirs(sd_folder_path2)
+os.makedirs(image_folder1)
+os.makedirs(image_folder2)
 
 print('Initialized', dataset, 'directory')
 
@@ -48,9 +48,9 @@ sd_model(sd_id)
 blip_model(blip_id)
 
 # Image and Prompt Generation
-generate_images(prompts, prompts, sd_folder_path1)
+generate_images(prompts, prompts, image_folder1)
 
-generated_prompts = generate_prompts(prompts, sd_folder_path1, output_path)
+generated_prompts = generate_prompts(prompts, image_folder1, output_path)
 
-generate_images(prompts, generated_prompts, sd_folder_path2)
+generate_images(prompts, generated_prompts, image_folder2)
 

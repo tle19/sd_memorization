@@ -89,5 +89,3 @@ def column_name(dataset):
     }
     if dataset in datasets:
         return dataset
-    # name_columns = [col for col in df.columns if 'name' in col.lower()]
-    # df = df.rename(columns={name_columns[0]: 'Name'})
