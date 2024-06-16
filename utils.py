@@ -19,13 +19,16 @@ def preprocessing(dataset):
     dataset_path = os.path.join('/home/tyler/datasets/' + dataset)
     csv_path = find_file(dataset_path)
     target = dataset_convert(dataset)
+
     new_path = os.path.join(dataset_path, target + '.csv')
     if os.path.exists(new_path):
-        return
-    if '.tsv' in csv_path:
-        csv_path = tsv_to_csv(csv_path)
+        return new_path
+    
+    if '.tsv' in csv_path:    
+        csv_file = pd.read_table(csv_path, sep='\t')
+    else:
+        csv_file = pd.read_csv(csv_path)
 
-    csv_file = pd.read_csv(csv_path)
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
     df = df.rename(columns={original_name: 'Name'})
@@ -58,12 +61,6 @@ def dataset_convert(dataset):
         return datasets[dataset]
     else:
         raise ValueError("Invalid dataset provided")
-
-def tsv_to_csv(tsv_file):
-    df = pd.read_table(tsv_file, sep='\t')
-    csv_file = tsv_file.replace('.tsv', '.csv')
-    df.to_csv(csv_file, index=False)
-    return csv_file
 
 def column_name(dataset):
     datasets = {
