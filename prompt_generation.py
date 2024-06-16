@@ -1,8 +1,8 @@
+import os
+import torch
+import pandas as pd
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
-import torch
-import os
-import pandas as pd
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 processor = None
@@ -27,7 +27,7 @@ def generate_prompts(prompts, path, output_path):
         'they are ',
         'they have ',
         'they\'re '
-        ]   
+        ]
     
     blip_prompts = ['Question: What is their approximate '] * len(features)
 

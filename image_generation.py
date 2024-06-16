@@ -1,6 +1,6 @@
+import os
 import torch
 from diffusers import StableDiffusionPipeline
-import os
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 pipe = None
