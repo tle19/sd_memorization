@@ -1,9 +1,8 @@
 import os
 import argparse
 import pandas as pd
-import shutil
-from image_generation import *
-from prompt_generation import *
+from image_generation import image_generation
+from prompt_generation import prompt_generation
 from utils import preprocessing
     
 def parse_args():
@@ -21,13 +20,11 @@ dataset = args.dataset
 
 # Compiling Prompts
 dataset_path = preprocessing(dataset)
-prompts_df = pd.read_csv(dataset_path).sample(100) #sampling 10 prompts for easy computation
+prompts_df = pd.read_csv(dataset_path).sample(10) #sampling 100 prompts for easy computation
 prompts = prompts_df['Name'].tolist()
 
 # Directory Initilization
 output_path = os.path.join('output/', dataset)
-if os.path.exists(output_path):
-    shutil.rmtree(output_path)
 os.makedirs(output_path)
 
 csv_file_path = os.path.join(output_path, 'prompts.csv')
@@ -42,13 +39,13 @@ os.makedirs(image_folder2)
 print('Initialized', dataset, 'directory')
 
 # Load SD & BLIP Models
-sd_model(sd_id)
-blip_model(blip_id)
+sd_model = image_generation(sd_id)
+blip_model = prompt_generation(blip_id)
 
 # Image and Prompt Generation
-generate_images(prompts, prompts, image_folder1)
+sd_model.generate_images(prompts, prompts, image_folder1)
 
-generated_prompts = generate_prompts(prompts, image_folder1, output_path)
+generated_prompts = blip_model.generate_prompts(prompts, image_folder1, output_path)
 
-generate_images(prompts, generated_prompts, image_folder2)
+sd_model.generate_images(prompts, generated_prompts, image_folder2)
 

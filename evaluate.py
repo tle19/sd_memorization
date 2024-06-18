@@ -33,7 +33,6 @@ model_id = args.model_id
 eval_metric = args.metric
 dataset = args.dataset
 
-# Load CLIP Model
 model = CLIPModel.from_pretrained(model_id)
 processor = CLIPProcessor.from_pretrained(model_id)
 
@@ -63,7 +62,7 @@ for prompt in generated_prompts:
     dist = eval_metric(image_features1, image_features2)
     distances.append(dist)
 
-    print(prompt, ':')
+    print(prompt + ':')
     print(dist)
 
 prompts_df['Metric'] = distances
