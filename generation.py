@@ -18,7 +18,6 @@ args = parse_args()
 sd_id = args.sd_model
 blip_id = args.blip_model
 dataset = args.dataset
-dtype = args.dtype
 
 # Compiling Prompts
 dataset_path = preprocessing(dataset)

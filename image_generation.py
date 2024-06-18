@@ -5,7 +5,7 @@ from diffusers import StableDiffusionPipeline
 device = "cuda" if torch.cuda.is_available() else "cpu"
 pipe = None
 
-def sd_model(model_id, dtype):
+def sd_model(model_id):
     global pipe
     pipe = StableDiffusionPipeline.from_pretrained(model_id, safety_checker = None, requires_safety_checker = False)
     pipe = pipe.to(device)
