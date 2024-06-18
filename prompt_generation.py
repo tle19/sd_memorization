@@ -74,10 +74,11 @@ def generate_prompts(prompts, path, output_path):
 
         for i in range(len(answers)):
             generated_answer = answers[i]
+            feature = features[i]
 
             #temporary brute force fix for feature prompt syntax
             if i > 1:
-                generated_answer = generated_answer + ' ' + features[i]
+                generated_answer = generated_answer + ' ' + feature
 
             if any(pre in generated_answer for pre in prefixes):
                 continue
