@@ -11,7 +11,7 @@ class image_generation():
 
     def generate_images(self, names, prompts, sd_folder_path1):
         start_val = 0
-        counter = '{:0{width}d}'.format(0, width=8)
+        counter = '{:0{width}d}'.format(start_val, width=8)
 
         for prompt in prompts:
             print('IMAGE', counter, '-', names[start_val])

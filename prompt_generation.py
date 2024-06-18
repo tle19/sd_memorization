@@ -13,6 +13,11 @@ class prompt_generation():
         self.model.to(self.device)
 
     def additional_prompts(self):
+        
+        self.pronoun_list = ['man', 
+                        'woman', 
+                        'boy', 
+                        'girl']
 
         self.features = [
             'racial background',
@@ -40,9 +45,10 @@ class prompt_generation():
         self.additional_prompts()
 
         start_val = 0
-        counter = '{:0{width}d}'.format(0, width=8)
+        counter = '{:0{width}d}'.format(start_val, width=8)
 
         generated_prompts = []
+        is_human = []
 
         for prompt in prompts:
             print('PROMPT', counter, '-', prompt)
@@ -59,6 +65,12 @@ class prompt_generation():
             #experiment with temperature, top_k, top_p
 
             text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+
+            if any(human in text for human in self.pronoun_list):
+                is_human.append(True)
+            else:
+                is_human.append(False)
+            
             # answers = []
             # for prompt in self.blip_prompts:
             #     inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
@@ -82,6 +94,7 @@ class prompt_generation():
         csv_path = os.path.join(output_path, 'prompts.csv')
         prompts_df = pd.read_csv(csv_path)
         prompts_df['Description'] = generated_prompts
+        prompts_df['is_human'] = is_human
         prompts_df.to_csv(csv_path)
 
         return generated_prompts

@@ -41,29 +41,31 @@ prompts_df = pd.read_csv(csv_path)
 generated_prompts = prompts_df['Name'].tolist()
 
 distances = []
-for prompt in generated_prompts:
-    path = os.path.join('output/', dataset)
+for index, prompt in enumerate(generated_prompts):
 
-    x = os.path.join(path, 'images1', prompt + '.png')
-    y = os.path.join(path, 'images2', prompt + '.png')
-    
-    image_x = Image.open(x)
-    image_y = Image.open(y)
+    if prompts_df['is_human'][index]:
+        path = os.path.join('output/', dataset)
 
-    # Image Embeddings
-    inputs_x = processor(images=image_x, return_tensors="pt")
-    inputs_y = processor(images=image_y, return_tensors="pt")
+        x = os.path.join(path, 'images1', prompt + '.png')
+        y = os.path.join(path, 'images2', prompt + '.png')
+        
+        image_x = Image.open(x)
+        image_y = Image.open(y)
 
-    # Image Features
-    with torch.no_grad():
-        image_features1 = model.get_image_features(**inputs_x).numpy()
-        image_features2 = model.get_image_features(**inputs_y).numpy()
+        # Image Embeddings
+        inputs_x = processor(images=image_x, return_tensors="pt")
+        inputs_y = processor(images=image_y, return_tensors="pt")
 
-    dist = eval_metric(image_features1, image_features2)
-    distances.append(dist)
+        # Image Features
+        with torch.no_grad():
+            image_features1 = model.get_image_features(**inputs_x).numpy()
+            image_features2 = model.get_image_features(**inputs_y).numpy()
 
-    print(prompt + ':')
-    print(dist)
+        dist = eval_metric(image_features1, image_features2)
+        distances.append(dist)
+
+        print(prompt + ':')
+        print(dist)
 
 prompts_df['Metric'] = distances
 prompts_df.to_csv(csv_path)
