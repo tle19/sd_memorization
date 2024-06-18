@@ -11,6 +11,7 @@ def parse_args():
     parser.add_argument('--sd_model', type=str, default="runwayml/stable-diffusion-v1-5")
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
+    parser.add_argument('--dtype', type=str, default="float16")
     args = parser.parse_args()
     return args
 
@@ -18,6 +19,8 @@ args = parse_args()
 sd_id = args.sd_model
 blip_id = args.blip_model
 dataset = args.dataset
+dtype = args.dtype
+torch_dtype = torch.float16 if dtype == 'float16' else torch.float32
 
 # Compiling Prompts
 dataset_path = preprocessing(dataset)
@@ -42,8 +45,8 @@ os.makedirs(image_folder2)
 print('Initialized', dataset, 'directory')
 
 # Load SD & BLIP Models
-sd_model(sd_id)
-blip_model(blip_id)
+sd_model(sd_id, torch_dtype)
+blip_model(blip_id, torch_dtype)
 
 # Image and Prompt Generation
 generate_images(prompts, prompts, image_folder1)

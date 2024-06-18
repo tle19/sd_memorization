@@ -5,9 +5,9 @@ from diffusers import StableDiffusionPipeline
 device = "cuda" if torch.cuda.is_available() else "cpu"
 pipe = None
 
-def sd_model(model_id):
+def sd_model(model_id, dtype):
     global pipe
-    pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)
+    pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=dtype, safety_checker = None, requires_safety_checker = False)
     pipe = pipe.to(device)
 
 def generate_images(names, prompts, sd_folder_path1):

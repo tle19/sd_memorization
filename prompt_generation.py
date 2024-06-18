@@ -8,9 +8,9 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 processor = None
 model = None
 
-def blip_model(model_id):
+def blip_model(model_id, dtype):
     global model, processor
-    model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16)
+    model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=dtype)
     processor = Blip2Processor.from_pretrained(model_id)
     model.to(device)
 
