@@ -71,23 +71,23 @@ class prompt_generation():
             else:
                 is_human.append(False)
             
-            # answers = []
-            # for prompt in self.blip_prompts:
-            #     inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
-            #     answer_id = self.model.generate(**inputs)
+            answers = []
+            for prompt in self.blip_prompts:
+                inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
+                answer_id = self.model.generate(**inputs)
 
-            #     generated_answer = self.processor.batch_decode(answer_id, skip_special_tokens=True, max_new_tokens=150)[0].strip()
-            #     generated_answer = generated_answer.lower().replace('.', '')
+                generated_answer = self.processor.batch_decode(answer_id, skip_special_tokens=True, max_new_tokens=150)[0].strip()
+                generated_answer = generated_answer.lower().replace('.', ',')
 
-            #     bad_answers = ['I don\'t know', 'unknown']
-            #     if generated_answer in bad_answers:
-            #         generated_answer = 'white'
+                # bad_answers = ['I don\'t know', 'unknown']
+                # if generated_answer in bad_answers:
+                #     generated_answer = 'white'
 
-            #     if not any(pre in generated_answer for pre in self.prefixes):
-            #         generated_answer = self.prefixes[0] + generated_answer
-            #     answers.append(generated_answer)
+                if not any(pre in generated_answer for pre in self.prefixes):
+                    generated_answer = self.prefixes[0] + generated_answer
+                answers.append(generated_answer)
             
-            # text = text + ', ' + ', '.join(answers)
+            text = text + ', ' + answers
             generated_prompts.append(text)
             print(text)
 

@@ -10,6 +10,7 @@ def parse_args():
     parser.add_argument('--sd_model', type=str, default="runwayml/stable-diffusion-v1-5")
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
+    parser.add_argument('--num_ppl', type=int, default=9999999)
     args = parser.parse_args()
     return args
 
@@ -17,10 +18,14 @@ args = parse_args()
 sd_id = args.sd_model
 blip_id = args.blip_model
 dataset = args.dataset
+num_ppl = args.num_ppl
 
 # Compiling Prompts
-dataset_path = preprocessing(dataset)
-prompts_df = pd.read_csv(dataset_path).sample(10) #sampling 100 prompts for easy computation
+size, dataset_path = preprocessing(dataset)
+if num_ppl > size:
+    prompts_df = pd.read_csv(dataset_path)
+else:
+    prompts_df = pd.read_csv(dataset_path).sample(num_ppl)
 prompts = prompts_df['Name'].tolist()
 
 # Directory Initilization

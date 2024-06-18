@@ -34,10 +34,11 @@ def preprocessing(dataset):
     df = df.rename(columns={original_name: 'Name'})
     df = df[['Name']]
 
-    print('Number of ' + target + ': ', df.shape[0])
+    size = df.shape[0]
+    print('Number of ' + target + ': ', size)
     
     df.to_csv(new_path, index=False)
-    return new_path
+    return size, new_path
 
 def find_file(dataset_path):
     files = os.listdir(dataset_path)
