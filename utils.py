@@ -16,7 +16,7 @@ def fid_distance(x, y):
     #implement FID
 
 def preprocessing(dataset):
-    dataset_path = os.path.join('/home/tyler/datasets/' + dataset) #change based on root directory
+    dataset_path = os.path.join('/data/tyler/datasets/' + dataset) #change based on root directory
     csv_path = find_file(dataset_path)
     target = dataset_convert(dataset)
 
