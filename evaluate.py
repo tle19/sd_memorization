@@ -64,13 +64,19 @@ for index, prompt in enumerate(generated_prompts):
         dist = eval_metric(image_features1, image_features2)
         distances.append(dist)
 
-        print(prompt + ':')
-        print(dist)
+    else:
+        dist = -1
+        distances.append(dist)
+
+    print(prompt + ':')
+    print(dist)
 
 prompts_df['Metric'] = distances
 prompts_df.to_csv(csv_path)
 
 # additional metrics
+distances = [dist for dist in distances if dist != -1]
+
 print('   \033[1m' + eval_metric.__name__ + '\033[0m')
 print('  Avg:', np.mean(distances))
 print('  Max:', np.max(distances))
