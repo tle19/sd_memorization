@@ -21,7 +21,7 @@ dataset = args.dataset
 
 # Compiling Prompts
 dataset_path = preprocessing(dataset)
-prompts_df = pd.read_csv(dataset_path).sample(1) #sampling 10 prompts for easy computation
+prompts_df = pd.read_csv(dataset_path).sample(100) #sampling 10 prompts for easy computation
 prompts = prompts_df['Name'].tolist()
 
 # Directory Initilization
