@@ -16,7 +16,8 @@ def preprocessing(dataset, output_path, sample_size):
     df = df.rename(columns={original_name: 'Name'})
     df = df[['Name']]
     df = df.sample(sample_size).sort_values('Name')
-    df.to_csv(output_path)
+    
+    df.to_csv(output_path, index=False)
 
     return df
 

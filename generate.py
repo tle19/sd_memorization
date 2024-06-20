@@ -2,7 +2,7 @@ import os
 import argparse
 import pandas as pd
 from image_generation import image_generation
-from prompt_generation import prompt_generation
+from prompt_generation import caption_generation
 from preprocessing import preprocessing
     
 def parse_args():
@@ -23,13 +23,12 @@ num_ppl = args.num_ppl
 one_prompt = args.prompt
 
 # Directory Initilization
-output_path = os.path.join('output/', dataset)
-
 count = 0
-output_path = os.path.join(output_path, f'{dataset}_{count}')
+output_path = os.path.join('output/', dataset, f'{dataset}_{count}')
+
 while os.path.exists(output_path):
     count += 1
-    output_path = os.path.join(output_path, f'{dataset}_{count}')
+    output_path = os.path.join('output/', dataset, f'{dataset}_{count}')
 
 os.makedirs(output_path)
 
@@ -52,12 +51,12 @@ print('Images to generate: ', num_ppl)
 
 # Load SD & BLIP Models
 sd_model = image_generation(sd_id)
-blip_model = prompt_generation(blip_id)
+blip_model = caption_generation(blip_id)
 
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1)
 
-generated_prompts = blip_model.generate_prompts(prompts, image_path1, output_path)
+generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path)
 
 sd_model.generate_images(prompts, generated_prompts, image_path2)
 
