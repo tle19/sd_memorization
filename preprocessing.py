@@ -17,7 +17,7 @@ def preprocessing(dataset, output_path, num_ppl):
 
     df = df.rename(columns={original_name: 'Name'})
     df = df[df['Name'].apply(is_english)]
-
+    
     if num_ppl > size:
         num_ppl = size
 
@@ -28,7 +28,7 @@ def preprocessing(dataset, output_path, num_ppl):
     return prompts
 
 def is_english(s):
-    return s.isascii()
+    return isinstance(s, str) and s.isascii()
 
 def find_file(dataset_path):
     files = os.listdir(dataset_path)
