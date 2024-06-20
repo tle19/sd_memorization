@@ -25,7 +25,7 @@ class prompt_generation():
             'I don\'t know', 'unknown'
             ]
         
-        self.blip_prompts = [
+        self.blip_questions = [
             'Question: What is their ethnicity? Answer: '
             'Question: What is their approximate age? Answer: '
             'Question: What is their hair color? Answer: '
@@ -40,6 +40,7 @@ class prompt_generation():
         is_human = []
 
         for prompt in prompts:
+            print('PROMPT', counter, '-', prompt)
 
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
@@ -48,21 +49,18 @@ class prompt_generation():
             counter = '{:0{width}d}'.format(start_val, width=8)
 
             prompt = "this is a picture of"
-            text = self.one_prompt(image, prompt, 50, 60)
+            text = self.generate_one_prompt(image, prompt, 30, 40)
 
             if any(human in text for human in self.nouns):
                 is_human.append(True)
             else:
                 is_human.append(False)
             
-            answers = []
-            for prompt in self.blip_prompts:
-                answers.append(self.add_questions(image, prompt))
+            answers = self.add_questions(image)
             
             text = text + ', ' + ','.join(answers)
             generated_prompts.append(text)
 
-            print('PROMPT', counter, '-', prompt)
             print(text)
 
         csv_path = os.path.join(output_path, 'prompts.csv')
@@ -73,26 +71,26 @@ class prompt_generation():
 
         return generated_prompts
     
-    def one_prompt(self, image, prompt, min=0, max=20):
+    def generate_one_prompt(self, image, prompt, min=0, max=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
-        generated_ids = self.model.generate(**inputs, min_new_tokens=min, max_new_tokens=max)
+        generated_ids = self.model.generate(**inputs, min_length=min, max_length=max)
             #experiment with temperature, top_k, top_p
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         return text.lower().replace('.', ',')
     
-    def add_questions(self, image, prompt):
-        generated_answer = self.one_prompt(image, prompt)
+    def add_questions(self, image):
+        answers = []
+        for question in self.blip_questions:
+            answer = self.generate_one_prompt(image, question)
 
-        # if generated_answer in bad_answers:
-        #     generated_answer = 'white'
-        
-        for subject in self.subjects:
-            if subject in generated_answer:
-                generated_answer.replace(subject, self.subjects[0])
-                break
+            # if answer in bad_answers:
+            #     answer = 'white'
+            
+            for subject in self.subjects:
+                if subject in answer:
+                    answer = answer.replace(subject, self.subjects[0])
             else:
-                generated_answer = self.subjects[0] + generated_answer
-                break
-        
-        return generated_answer    
+                answer = self.subjects[0] + answer
+            
+            answers.append(answer)
