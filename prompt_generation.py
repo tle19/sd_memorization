@@ -17,20 +17,21 @@ class caption_generation():
             'boy', 'girl', 'player', 'players'
             ]
         
-        self.subjects = [
-            'they are', 'they have', 'they\'re'
-            ]
+        self.subjects = {
+            'they are': "", 'they have': ["hair", "eyes"], 'they\'re': "", 'it\'s': ""
+            }
 
         self.bad_answers = [
-            'I don\'t know', 'unknown'
+            'I don\'t know', 'unknown', 'mystery'
             ]
         
-        self.blip_questions = [
-            'Question: What is their ethnicity? Answer:',
-            'Question: What is their approximate age? Answer:',
-            'Question: What is their hair color? Answer:',
-            'Question: What is their eye color? Answer:'
-            ]
+        self.blip_questions = {
+            'Question: What is their ethnicity? Answer:': "white",
+            'Question: What is their approximate age? Answer:': "40",
+            'Question: What color is their hair? Answer:': "black",
+            'Question: What color is their eyes? Answer:': "brown"
+            }
+            #   dictionary for default values for question prompts
     
     def generate_captions(self, prompts, path, output_path):
         start_val = 0
@@ -58,7 +59,7 @@ class caption_generation():
                 is_human.append(False)
             
             answers = self.add_questions(image)
-            text = text + ', ' + ','.join(answers)
+            text = text + ', ' + ', '.join(answers)
 
             generated_captions.append(text)
 
@@ -86,11 +87,19 @@ class caption_generation():
 
         for question in self.blip_questions:
             answer = self.generate_one_caption(image, question, max=30)
-            answer = answer.replace(',', '')
 
-            # if answer in bad_answers:
-            #     answer = 'white'
+            for bad_ans in self.bad_answers:
+                if bad_ans in answer:
+                    default_answer = self.blip_questions[question]
+                    answer = answer.replace(default_answer)
             
+            for sub in self.subjects:
+                features = self.subjects[sub]
+                if len(features):
+                    for feat in features:
+                        if feat in question:
+                            answer = answer + ' ' + feat
+
             if not any(subject in answer for subject in self.subjects):
                 answer = self.subjects[0] + ' ' + answer
             else:
