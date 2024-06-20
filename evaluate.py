@@ -39,7 +39,7 @@ folder = args.folder
 model = CLIPModel.from_pretrained(model_id)
 processor = CLIPProcessor.from_pretrained(model_id)
 
-output_path = os.path.join('output', dataset, '_' + folder)
+output_path = os.path.join('output', dataset, '_' + str(folder))
 csv_path = os.path.join(output_path, 'prompts.csv')
 prompts_df = pd.read_csv(csv_path)
 generated_prompts = prompts_df['Name'].tolist()
