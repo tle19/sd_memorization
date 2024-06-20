@@ -93,12 +93,14 @@ class caption_generation():
                     default_answer = self.blip_questions[question]
                     answer = answer.replace(default_answer)
             
-            for sub in self.subjects:
-                features = self.subjects[sub]
+            for subject in self.subjects:
+                features = self.subjects[subject]
                 if len(features):
-                    for feat in features:
-                        if feat in question:
-                            answer = answer + ' ' + feat
+                    for feature in features:
+                        if feature in question:
+                            answer = answer + ' ' + feature
+                            answer = subject + ' ' + answer
+                            break
 
             if not any(subject in answer for subject in self.subjects):
                 answer = self.subjects.keys()[0] + ' ' + answer
