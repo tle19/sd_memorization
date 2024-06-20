@@ -92,19 +92,33 @@ class caption_generation():
                 if bad_ans in answer:
                     default_answer = self.blip_questions[question]
                     answer = answer.replace(bad_ans, default_answer)
-            
-            for subject in self.subjects:
-                features = self.subjects[subject]
-                if len(features):
-                    for feature in features:
-                        if feature in question:
-                            answer = answer + ' ' + feature
-                            answer = subject + ' ' + answer
-                            break
+
+            answer_changed = False
+            for subject, features in self.subjects.items():
+                if answer_changed:
+                    break
+
+                if features and any(feature in question for feature in features):
+                    feature = next(feature for feature in features if feature in question)
+                    answer = f"{subject} {answer} {feature}"
+                    answer_changed = True
                 elif subject in answer:
                     answer = answer.replace(subject, list(self.subjects.keys())[0])
+                    answer_changed = True
                 else:
-                    answer = list(self.subjects.keys())[0] + ' ' + answer
+                    answer = f"{list(self.subjects.keys())[0]} {answer}"
+                    answer_changed = True
+            # for subject in self.subjects:
+            #     features = self.subjects[subject]
+            #     if len(features):
+            #         for feature in features:
+            #             if feature in question:
+            #                 answer = answer + ' ' + feature
+            #                 answer = subject + ' ' + answer
+            #     elif subject in answer:
+            #         answer = answer.replace(subject, list(self.subjects.keys())[0])
+            #     else:
+            #         answer = list(self.subjects.keys())[0] + ' ' + answer
 
             answers.append(answer)
 
