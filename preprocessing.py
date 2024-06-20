@@ -35,7 +35,7 @@ def column_name(dataset):
     datasets = {
         'imdb': 'primaryName',
         'voxceleb': 'speakers',
-        'everypolitician': 'person',
+        'everypolitician': 'name',
         'musicbrainz': 'artist_mb'
     }
     if dataset in datasets:
