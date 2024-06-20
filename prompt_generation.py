@@ -18,11 +18,11 @@ class caption_generation():
             ]
         
         self.subjects = {
-            'they are': "", 'they have': ["hair", "eyes"], 'they\'re': "", 'it\'s': ""
+            'they are': "", 'they have': ["hair", "eyes"], 'they\'re': "", 'it\'s': "", 'i am': ""
             }
 
         self.bad_answers = [
-            'i don\'t know', 'it depends', 'i am not sure', 'unknown', 'mystery'
+            'i don\'t know', 'it depends', 'i am not sure', 'i\'m not sure', 'unknown', 'mystery'
             ]
         
         self.blip_questions = {
@@ -59,12 +59,11 @@ class caption_generation():
                 is_human.append(False)
             
             answers = self.add_questions(image)
-            text = text + ', ' + ', '.join(answers)
+            # text = text + ', '.join(answers)
 
             generated_captions.append(text)
 
-            print(answers)
-            # print(text)
+            print(text)
 
         csv_path = os.path.join(output_path, 'prompts.csv')
         prompts_df = pd.read_csv(csv_path)
@@ -89,16 +88,19 @@ class caption_generation():
         else:
             return text
     
+    def filter_vague(self, text):
+        for bad_ans in self.bad_answers:
+            if bad_ans in answer:
+                default_answer = self.blip_questions[text]
+                answer = answer.replace(bad_ans, default_answer)
+
     def add_questions(self, image):
         answers = []
 
         for question in self.blip_questions:
             answer = self.generate_one_caption(image, question, max=25).lower()
 
-            for bad_ans in self.bad_answers:
-                if bad_ans in answer:
-                    default_answer = self.blip_questions[question]
-                    answer = answer.replace(bad_ans, default_answer)
+            self.filter_vague(question)
 
             if not any(subject in answer for subject in self.subjects):
                 answer = list(self.subjects.keys())[0] + ' ' + answer
