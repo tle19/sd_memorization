@@ -14,6 +14,7 @@ def preprocessing(dataset, output_path, num_ppl):
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
     size = df.shape[0]
+    print(size)
 
     df = df.rename(columns={original_name: 'Name'})
     df = df[df['Name'].apply(is_english)]
