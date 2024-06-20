@@ -101,11 +101,11 @@ class caption_generation():
                             answer = answer + ' ' + feat
 
             if not any(subject in answer for subject in self.subjects):
-                answer = self.subjects[0] + ' ' + answer
+                answer = self.subjects.keys()[0] + ' ' + answer
             else:
                 for subject in self.subjects:
                     if subject in answer:
-                        answer = answer.replace(subject, self.subjects[0])
+                        answer = answer.replace(subject, self.subjects.keys()[0])
                         break
             
             answers.append(answer)
