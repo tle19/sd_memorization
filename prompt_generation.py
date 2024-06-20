@@ -91,7 +91,7 @@ class caption_generation():
             for bad_ans in self.bad_answers:
                 if bad_ans in answer:
                     default_answer = self.blip_questions[question]
-                    answer = answer.replace(default_answer)
+                    answer = answer.replace(bad_ans, default_answer)
             
             for subject in self.subjects:
                 features = self.subjects[subject]
@@ -103,11 +103,11 @@ class caption_generation():
                             break
 
             if not any(subject in answer for subject in self.subjects):
-                answer = self.subjects.keys()[0] + ' ' + answer
+                answer = list(self.subjects.keys())[0] + ' ' + answer
             else:
                 for subject in self.subjects:
                     if subject in answer:
-                        answer = answer.replace(subject, self.subjects.keys()[0])
+                        answer = answer.replace(subject, list(self.subjects.keys())[0])
                         break
             
             answers.append(answer)
