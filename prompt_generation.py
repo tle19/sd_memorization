@@ -106,7 +106,8 @@ class caption_generation():
                 if len(features):
                     for feature in features:
                         if feature in question:
-                            answer = f"{subject} {answer} {feature}"
+                            answer = answer.replace(self.subjects.keys()[0], subject)
+                            answer = f"{answer} {feature}"
                             break
             
             answers.append(answer)
