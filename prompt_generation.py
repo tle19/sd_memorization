@@ -90,9 +90,10 @@ class caption_generation():
     
     def filter_vague(self, text):
         for bad_ans in self.bad_answers:
-            if bad_ans in answer:
+            if bad_ans in text:
                 default_answer = self.blip_questions[text]
-                answer = answer.replace(bad_ans, default_answer)
+                text = text.replace(bad_ans, default_answer)
+        return text
 
     def add_questions(self, image):
         answers = []
