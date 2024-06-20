@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 def preprocessing(dataset, output_path, sample_size):
-    dataset_path = os.path.join('/home/tyler/datasets/' + dataset) #change based on root directory
+    dataset_path = os.path.join('/data/tyler/datasets/' + dataset) #change based on root directory
     output_path = os.path.join(output_path, 'prompts.csv')
     csv_path = find_file(dataset_path)
 
