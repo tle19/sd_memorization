@@ -13,8 +13,8 @@ class caption_generation():
         self.model.to(self.device)
 
         self.nouns = [
-            'person', 'people', 'man', 'men' 'woman', 'women',
-            'boy', 'girl', 'player', 'players'
+            'man', 'men', 'woman', 'women', 'boy', 'girl',
+            'person', 'people', 'player', 'players'
             ]
         
         self.subjects = {
@@ -59,7 +59,7 @@ class caption_generation():
                 is_human.append(False)
             
             answers = self.add_questions(image)
-            # text = text + ', '.join(answers)
+            text = text + ', ' + ', '.join(answers)
 
             generated_captions.append(text)
 
