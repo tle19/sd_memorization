@@ -22,7 +22,7 @@ class caption_generation():
             }
 
         self.bad_answers = [
-            'i don\'t know', 'unknown', 'mystery'
+            'i don\'t know', 'unknown', 'mystery', 'it depends on'
             ]
         
         self.blip_questions = {
@@ -86,7 +86,7 @@ class caption_generation():
         answers = []
 
         for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, max=15).lower()
+            answer = self.generate_one_caption(image, question, max=20).lower()
 
             for bad_ans in self.bad_answers:
                 if bad_ans in answer:
