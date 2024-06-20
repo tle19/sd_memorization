@@ -62,7 +62,8 @@ class caption_generation():
 
             generated_captions.append(text)
 
-            print(text)
+            print(answers)
+            # print(text)
 
         csv_path = os.path.join(output_path, 'prompts.csv')
         prompts_df = pd.read_csv(csv_path)
