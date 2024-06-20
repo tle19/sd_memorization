@@ -44,7 +44,7 @@ prompts = prompts_df['Name'].tolist()
 size = len(prompts)
 
 if one_prompt != '':
-    prompts = one_prompt
+    prompts = [one_prompt]
 
 print('Initialized', dataset, 'directory')
 print('Images to generate: ', len(prompts))
