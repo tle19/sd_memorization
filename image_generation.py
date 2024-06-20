@@ -18,13 +18,7 @@ class image_generation():
         for prompt in prompts:
             print('IMAGE', counter, '-', names[start_val])
             
-            if self.accelerator:
-                with self.accelerator.autocast():
-                    image = self.pipe(prompt).images[0]
-            else:
-                with torch.autocast(self.device):
-                    image = self.pipe(prompt).images[0]
-
+            image = self.pipe(prompt).images[0]
             image_path = os.path.join(sd_folder_path1, names[start_val] + '.png')
             image.save(image_path)
 
