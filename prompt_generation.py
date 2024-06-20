@@ -22,7 +22,7 @@ class caption_generation():
             }
 
         self.bad_answers = [
-            'i don\'t know', 'unknown', 'mystery', 'it depends on'
+            'i don\'t know', 'it depends', 'i am not sure', 'unknown', 'mystery'
             ]
         
         self.blip_questions = {
@@ -82,11 +82,18 @@ class caption_generation():
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         return text.lower()
     
+    def comma_splice(self, text):
+        pos = text.find(',')
+        if pos != -1:
+            return text[:pos]
+        else:
+            return text
+    
     def add_questions(self, image):
         answers = []
 
         for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, max=20).lower()
+            answer = self.generate_one_caption(image, question, max=25).lower()
 
             for bad_ans in self.bad_answers:
                 if bad_ans in answer:
@@ -109,7 +116,9 @@ class caption_generation():
                             answer = answer.replace(list(self.subjects.keys())[0], subject)
                             answer = f"{answer} {feature}"
                             break
-            
+
+            answer = self.comma_splice(answer)
+
             answers.append(answer)
 
         return answers
