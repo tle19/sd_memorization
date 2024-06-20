@@ -39,12 +39,9 @@ os.makedirs(image_path1)
 os.makedirs(image_path2)
 
 # Dataset Preprocessing
-prompts_df = preprocessing(dataset, output_path, num_ppl)
-prompts = prompts_df['Name'].tolist()
-size = len(prompts)
+prompts = preprocessing(dataset, output_path, num_ppl)
 
 if one_prompt != '':
-    print(one_prompt)
     prompts = [one_prompt]
 
 print('Initialized', dataset, 'directory')

@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-def preprocessing(dataset, output_path, sample_size):
+def preprocessing(dataset, output_path, num_ppl):
     dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
     output_path = os.path.join(output_path, 'prompts.csv')
     csv_path = find_file(dataset_path)
@@ -13,13 +13,19 @@ def preprocessing(dataset, output_path, sample_size):
 
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
+    size = prompts_df.shape[0]
+
     df = df.rename(columns={original_name: 'Name'})
     df = df[df['Name'].apply(is_english)]
-    df = df.sample(sample_size).sort_values('Name')
-    
-    df.to_csv(output_path, index=False)
 
-    return df
+    if num_ppl > size:
+        num_ppl = size
+
+    prompts_df = prompts_df.sample(num_ppl).sort_values('Name')
+    prompts_df.to_csv(output_path, index=False)
+    prompts = prompts_df['Name'].tolist()
+    
+    return prompts
 
 def is_english(s):
     return all(ord(char) < 128 for char in s)
