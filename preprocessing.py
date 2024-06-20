@@ -14,12 +14,18 @@ def preprocessing(dataset, output_path, sample_size):
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
     df = df.rename(columns={original_name: 'Name'})
-    df = df[['Name']]
+    df = df[['Name'].apply(is_english)]
     df = df.sample(sample_size).sort_values('Name')
     
     df.to_csv(output_path, index=False)
 
     return df
+
+def is_english(s):
+    return all(ord(char) < 128 for char in s)
+
+def filter_non_english_names(df, name_column):
+    return df[df[name_column].apply(is_english)]
 
 def find_file(dataset_path):
     files = os.listdir(dataset_path)
