@@ -10,7 +10,7 @@ def parse_args():
     parser.add_argument('--sd_model', type=str, default="runwayml/stable-diffusion-v1-5")
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
-    parser.add_argument('--num_ppl', type=int, default=9999999)
+    parser.add_argument('--num_ppl', type=int, default=99999999)
     parser.add_argument('--prompt', type=str, default='')
     args = parser.parse_args()
     return args
@@ -39,9 +39,9 @@ os.makedirs(image_path1)
 os.makedirs(image_path2)
 
 # Dataset Preprocessing
-prompts = preprocessing(dataset, output_path, num_ppl)
-
-if one_prompt != '':
+if one_prompt == '':
+    prompts = preprocessing(dataset, output_path, num_ppl)
+else:
     prompts = [one_prompt]
 
 print('Initialized', dataset, 'directory')
