@@ -13,7 +13,7 @@ def preprocessing(dataset, output_path, num_ppl):
 
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
-    size = prompts_df.shape[0]
+    size = df.shape[0]
 
     df = df.rename(columns={original_name: 'Name'})
     df = df[df['Name'].apply(is_english)]
@@ -21,14 +21,14 @@ def preprocessing(dataset, output_path, num_ppl):
     if num_ppl > size:
         num_ppl = size
 
-    prompts_df = prompts_df.sample(num_ppl).sort_values('Name')
-    prompts_df.to_csv(output_path, index=False)
-    prompts = prompts_df['Name'].tolist()
-    
+    df = df.sample(num_ppl).sort_values('Name')
+    df.to_csv(output_path, index=False)
+    prompts = df['Name'].tolist()
+
     return prompts
 
 def is_english(s):
-    return all(ord(char) < 128 for char in s)
+    return s.isascii()
 
 def find_file(dataset_path):
     files = os.listdir(dataset_path)
