@@ -86,40 +86,29 @@ class caption_generation():
         answers = []
 
         for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, max=30)
+            answer = self.generate_one_caption(image, question, max=30).lower()
 
             for bad_ans in self.bad_answers:
                 if bad_ans in answer:
                     default_answer = self.blip_questions[question]
                     answer = answer.replace(bad_ans, default_answer)
 
-            answer_changed = False
-            for subject, features in self.subjects.items():
-                if answer_changed:
-                    break
-
-                if features and any(feature in question for feature in features):
-                    feature = next(feature for feature in features if feature in question)
-                    answer = f"{subject} {answer} {feature}"
-                    answer_changed = True
-                elif subject in answer:
-                    answer = answer.replace(subject, list(self.subjects.keys())[0])
-                    answer_changed = True
-                else:
-                    answer = f"{list(self.subjects.keys())[0]} {answer}"
-                    answer_changed = True
-            # for subject in self.subjects:
-            #     features = self.subjects[subject]
-            #     if len(features):
-            #         for feature in features:
-            #             if feature in question:
-            #                 answer = answer + ' ' + feature
-            #                 answer = subject + ' ' + answer
-            #     elif subject in answer:
-            #         answer = answer.replace(subject, list(self.subjects.keys())[0])
-            #     else:
-            #         answer = list(self.subjects.keys())[0] + ' ' + answer
-
+            if not any(subject in answer for subject in self.subjects):
+                answer = list(self.subjects.keys())[0] + ' ' + answer
+            else:
+                for subject in self.subjects:
+                    if subject in answer:
+                        answer = answer.replace(subject, list(self.subjects.keys())[0])
+                        break
+            
+            for subject in self.subjects:
+                features = self.subjects[subject]
+                if len(features):
+                    for feature in features:
+                        if feature in question:
+                            answer = answer.replace(subject, feature)
+                            break
+            
             answers.append(answer)
 
         return answers
