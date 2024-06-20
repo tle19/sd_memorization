@@ -7,7 +7,7 @@ class image_generation():
 
     def __init__(self, model_id):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.accelerator =  Accelerator() if torch.cuda.device_count() > 1 else None
+        self.device =  Accelerator().device if torch.cuda.device_count() > 1 else self.device
         self.pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)
         self.pipe = self.pipe.to(self.device)
 
@@ -24,7 +24,7 @@ class image_generation():
             else:
                 with torch.autocast(self.device):
                     image = self.pipe(prompt).images[0]
-                    
+
             image_path = os.path.join(sd_folder_path1, names[start_val] + '.png')
             image.save(image_path)
 
