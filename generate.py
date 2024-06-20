@@ -41,13 +41,13 @@ os.makedirs(image_path2)
 # Dataset Preprocessing
 prompts_df = preprocessing(dataset, output_path, num_ppl)
 prompts = prompts_df['Name'].tolist()
-size = prompts_df.shape[0]
+size = len(prompts)
 
-if num_ppl > size:
-    num_ppl = size
+if one_prompt != '':
+    prompts = one_prompt
 
 print('Initialized', dataset, 'directory')
-print('Images to generate: ', num_ppl)
+print('Images to generate: ', len(prompts))
 
 # Load SD & BLIP Models
 sd_model = image_generation(sd_id)
