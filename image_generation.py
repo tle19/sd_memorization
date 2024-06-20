@@ -11,7 +11,7 @@ class image_generation():
         
         if torch.cuda.device_count() > 1:
             print("Using", torch.cuda.device_count(), "GPUs")
-            self.pipe = DataParallel(self.pipeline)
+            self.pipe = DataParallel(self.pipe)
 
         self.pipe = self.pipe.to(self.device)
 
