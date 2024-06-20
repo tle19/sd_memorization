@@ -106,7 +106,7 @@ class caption_generation():
                 if len(features):
                     for feature in features:
                         if feature in question:
-                            answer = answer.replace(subject, feature)
+                            answer = f"{subject} {answer} {feature}"
                             break
             
             answers.append(answer)
