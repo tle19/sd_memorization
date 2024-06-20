@@ -101,15 +101,11 @@ class caption_generation():
                             answer = answer + ' ' + feature
                             answer = subject + ' ' + answer
                             break
+                elif subject in answer:
+                    answer = answer.replace(subject, list(self.subjects.keys())[0])
+                else:
+                    answer = list(self.subjects.keys())[0] + ' ' + answer
 
-            if not any(subject in answer for subject in self.subjects):
-                answer = list(self.subjects.keys())[0] + ' ' + answer
-            else:
-                for subject in self.subjects:
-                    if subject in answer:
-                        answer = answer.replace(subject, list(self.subjects.keys())[0])
-                        break
-            
             answers.append(answer)
 
         return answers
