@@ -25,7 +25,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Memorization Metrics")
     parser.add_argument('--model_id', type=str, default="openai/clip-vit-base-patch32")
     parser.add_argument('--metric', type=metric, default="cosine")
-    parser.add_argument('--folder', type=str, default="imdb_0")
+    parser.add_argument('--dataset', type=str, default="imdb")
+    parser.add_argument('--folder', type=int, default=0)
     args = parser.parse_args()
     return args
 
@@ -33,11 +34,12 @@ args = parse_args()
 model_id = args.model_id
 eval_metric = args.metric
 dataset = args.dataset
+folder = args.folder
 
 model = CLIPModel.from_pretrained(model_id)
 processor = CLIPProcessor.from_pretrained(model_id)
 
-output_path = os.path.join('output/', dataset)
+output_path = os.path.join('output', dataset, '_' + folder)
 csv_path = os.path.join(output_path, 'prompts.csv')
 prompts_df = pd.read_csv(csv_path)
 generated_prompts = prompts_df['Name'].tolist()
