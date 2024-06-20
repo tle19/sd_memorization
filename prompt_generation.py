@@ -18,7 +18,7 @@ class caption_generation():
             ]
         
         self.subjects = [
-            'they are ', 'they have ', 'they\'re '
+            'they are', 'they have', 'they\'re'
             ]
 
         self.bad_answers = [
@@ -26,10 +26,10 @@ class caption_generation():
             ]
         
         self.blip_questions = [
-            'Question: What is their ethnicity? Answer: '
-            'Question: What is their approximate age? Answer: '
-            'Question: What is their hair color? Answer: '
-            'Question: What is their eye color? Answer: '
+            'Question: What is their ethnicity? Answer:',
+            'Question: What is their approximate age? Answer:',
+            'Question: What is their hair color? Answer:',
+            'Question: What is their eye color? Answer:'
             ]
     
     def generate_captions(self, prompts, path, output_path):
@@ -50,15 +50,16 @@ class caption_generation():
 
             prompt = "this is a picture of"
             text = self.generate_one_caption(image, prompt, 30, 40)
+            text = text.replace('.', ',')
 
             if any(human in text for human in self.nouns):
                 is_human.append(True)
             else:
                 is_human.append(False)
             
-            # answers = self.add_questions(image)
-            # text = text + ', ' + ','.join(answers)
-            
+            answers = self.add_questions(image)
+            text = text + ', ' + ','.join(answers)
+
             generated_captions.append(text)
 
             print(text)
@@ -77,20 +78,26 @@ class caption_generation():
             #experiment with temperature, top_k, top_p
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-        return text.lower().replace('.', ',')
+        return text.lower()
     
     def add_questions(self, image):
         answers = []
+
         for question in self.blip_questions:
             answer = self.generate_one_caption(image, question, max=30)
+            answer = answer.replace(',', '')
 
             # if answer in bad_answers:
             #     answer = 'white'
             
-            for subject in self.subjects:
-                if subject in answer:
-                    answer = answer.replace(subject, self.subjects[0])
+            if not any(subject in answer for subject in self.subjects):
+                answer = self.subjects[0] + ' ' + answer
             else:
-                answer = self.subjects[0] + answer
+                for subject in self.subjects:
+                    if subject in answer:
+                        answer = answer.replace(subject, self.subjects[0])
+                        break
             
             answers.append(answer)
+
+        return answers
