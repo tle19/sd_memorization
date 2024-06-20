@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 from image_generation import image_generation
 from prompt_generation import prompt_generation
-from utils import preprocessing
+from preprocessing import preprocessing
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Image & Prompt Generation")
@@ -11,6 +11,7 @@ def parse_args():
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
     parser.add_argument('--num_ppl', type=int, default=9999999)
+    parser.add_argument('--prompt', type=str, default='')
     args = parser.parse_args()
     return args
 
@@ -19,38 +20,44 @@ sd_id = args.sd_model
 blip_id = args.blip_model
 dataset = args.dataset
 num_ppl = args.num_ppl
-
-# Compiling Prompts
-size, dataset_path = preprocessing(dataset)
-if num_ppl > size:
-    prompts_df = pd.read_csv(dataset_path)
-else:
-    prompts_df = pd.read_csv(dataset_path).sample(num_ppl)
-prompts = prompts_df['Name'].tolist()
+one_prompt = args.prompt
 
 # Directory Initilization
 output_path = os.path.join('output/', dataset)
+
+count = 0
+output_path = os.path.join(output_path, f'{dataset}_{count}')
+while os.path.exists(output_path):
+    count += 1
+    output_path = os.path.join(output_path, f'{dataset}_{count}')
+
 os.makedirs(output_path)
 
-csv_file_path = os.path.join(output_path, 'prompts.csv')
-prompts_df.to_csv(csv_file_path)
+image_path1 = os.path.join(output_path, 'images1')
+image_path2 = os.path.join(output_path, 'images2')
 
-image_folder1 = os.path.join(output_path, 'images1')
-image_folder2 = os.path.join(output_path, 'images2')
+os.makedirs(image_path1)
+os.makedirs(image_path2)
 
-os.makedirs(image_folder1)
-os.makedirs(image_folder2)
+# Dataset Preprocessing
+prompts_df = preprocessing(dataset, output_path, num_ppl)
+prompts = prompts_df['Name'].tolist()
+size = prompts_df.shape[0]
+
+if num_ppl > size:
+    num_ppl = size
 
 print('Initialized', dataset, 'directory')
+print('Images to generate: ', num_ppl)
 
 # Load SD & BLIP Models
 sd_model = image_generation(sd_id)
 blip_model = prompt_generation(blip_id)
 
 # Image and Prompt Generation
-sd_model.generate_images(prompts, prompts, image_folder1)
+sd_model.generate_images(prompts, prompts, image_path1)
 
-generated_prompts = blip_model.generate_prompts(prompts, image_folder1, output_path)
+generated_prompts = blip_model.generate_prompts(prompts, image_path1, output_path)
 
-sd_model.generate_images(prompts, generated_prompts, image_folder2)
+sd_model.generate_images(prompts, generated_prompts, image_path2)
 
