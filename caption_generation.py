@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 
-class caption_generation():
+class CaptionGeneration():
     
     def __init__(self, model_id):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"

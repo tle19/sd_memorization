@@ -1,8 +1,8 @@
 import os
 import argparse
 import pandas as pd
-from image_generation import image_generation
-from prompt_generation import caption_generation
+from image_generation import ImageGeneration
+from caption_generation import CaptionGeneration
 from preprocessing import preprocessing
     
 def parse_args():
@@ -48,8 +48,8 @@ print('Initialized', dataset, 'directory')
 print('Images to generate: ', len(prompts))
 
 # Load SD & BLIP Models
-sd_model = image_generation(sd_id)
-blip_model = caption_generation(blip_id)
+sd_model = ImageGeneration(sd_id)
+blip_model = CaptionGeneration(blip_id)
 
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1)
