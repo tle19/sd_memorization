@@ -1,7 +1,6 @@
 import os
 import torch
 from diffusers import StableDiffusionPipeline
-from accelerate import PartialState
 
 class image_generation():
 

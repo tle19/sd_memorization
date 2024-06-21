@@ -57,7 +57,6 @@ def image_feature(z):
 
 for index, prompt in enumerate(generated_prompts):
 
-    print(type(prompts_df))
     if prompts_df['is_human'][index]:
         x = os.path.join(output_path, 'images1', prompt + '.png')
         y = os.path.join(output_path, 'images2', prompt + '.png')
