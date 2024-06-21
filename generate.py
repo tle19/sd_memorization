@@ -48,7 +48,7 @@ else:
     prompts = [one_prompt]
     save_csv(pd.DataFrame(prompts), output_path)
 
-print('Initialized', dataset, 'directory')
+print(f'Initialized {dataset}_{count} directory')
 print('Images to generate: ', len(prompts))
 
 # Load SD & BLIP Models

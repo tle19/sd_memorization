@@ -44,7 +44,7 @@ class CaptionGeneration():
             image = Image.open(image_path)
 
             prompt = "this is a picture of"
-            text = self.generate_one_caption(image, prompt, temp=0.7, k=35, min=30, max=40)
+            text = self.generate_one_caption(image, prompt, temp=0.7, min=30, max=40)
             text = text.replace('.', ',')
 
             if any(human in text for human in self.nouns):
@@ -95,7 +95,7 @@ class CaptionGeneration():
         answers = []
 
         for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, temp=0.6, max=25).lower()
+            answer = self.generate_one_caption(image, question, temp=0.5, max=25).lower()
 
             answer = self.filter_vague(answer, question)
 
