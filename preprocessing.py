@@ -22,7 +22,7 @@ def preprocessing(dataset, output_path, num_ppl):
     if num_ppl > size:
         num_ppl = size
 
-    df = df.sample(num_ppl).sort_values('Name')
+    df = df.sample(num_ppl, random_state=40678).sort_values('Name')
     df.to_csv(output_path, index=False)
     prompts = df['Name'].tolist()
 
