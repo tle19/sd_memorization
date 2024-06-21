@@ -84,12 +84,12 @@ class CaptionGeneration():
         else:
             return text
     
-    def filter_vague(self, text):
+    def filter_vague(self, answer, question):
         for bad_ans in self.bad_answers:
-            if bad_ans in text:
-                default_answer = self.blip_questions[text]
-                text = text.replace(bad_ans, default_answer)
-        return text
+            if bad_ans in answer:
+                default_answer = self.blip_questions[question]
+                answer = answer.replace(bad_ans, default_answer)
+        return answer
 
     def add_questions(self, image):
         answers = []
@@ -97,7 +97,7 @@ class CaptionGeneration():
         for question in self.blip_questions:
             answer = self.generate_one_caption(image, question, temp=0.6, max=25).lower()
 
-            answer = self.filter_vague(answer)
+            answer = self.filter_vague(answer, question)
 
             if not any(subject in answer for subject in self.subjects):
                 answer = list(self.subjects.keys())[0] + ' ' + answer
