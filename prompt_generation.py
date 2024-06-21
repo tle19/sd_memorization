@@ -101,7 +101,7 @@ class caption_generation():
         for question in self.blip_questions:
             answer = self.generate_one_caption(image, question, temp=0.6, max=25).lower()
 
-            self.filter_vague(question)
+            answer = self.filter_vague(answer)
 
             if not any(subject in answer for subject in self.subjects):
                 answer = list(self.subjects.keys())[0] + ' ' + answer
