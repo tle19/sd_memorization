@@ -16,6 +16,7 @@ def preprocessing(dataset, output_path, num_ppl):
 
     df = df.rename(columns={original_name: 'Name'})
     df = df[df['Name'].apply(is_english)]
+    df = df[['Name']]
     size = df.shape[0]
     
     if num_ppl > size:
