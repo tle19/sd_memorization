@@ -9,6 +9,12 @@ class image_generation():
         self.pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)   
         self.pipe = self.pipe.to(self.device)
 
+        if torch.cuda.device_count() > 1:
+            print("Using", torch.cuda.device_count(), "GPUs")
+            self.pipe = torch.nn.DataParallel(self.pipe)
+
+        self.pipe = self.pipe.to(self.device)
+
     def generate_images(self, names, prompts, sd_folder_path1):
         start_val = 0
         counter = '{:0{width}d}'.format(start_val, width=8)
