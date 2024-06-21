@@ -37,11 +37,18 @@ class ImageGeneration:
             self.pipe = self.pipe.to(self.device)
 
     def generate_images(self, names, prompts, sd_folder_path1):
+        
+        start_val = 0
+        counter = '{:0{width}d}'.format(start_val, width=8)
 
-        with self.distributed_state.split_between_processes(prompts) as prompts_partition:
-            for prompt in prompts_partition:
-                name = names[self.distributed_state.process_index]
-                print('IMAGE', '-', name)
-                image = self.pipe(prompt).images[0]
-                image_path = os.path.join(sd_folder_path1, f"{name}.png")
-                image.save(image_path)
+        with self.distributed_state.split_between_processes(prompts) as prompt:
+            name = names[self.distributed_state.process_index]
+            image_path = os.path.join(sd_folder_path1, f"{name}.png")
+            
+            print('IMAGE', counter, '-', name)
+
+            image = self.pipe(prompt).images[0]
+            image.save(image_path)
+
+            start_val += 1
+            counter = '{:0{width}d}'.format(start_val, width=8)
