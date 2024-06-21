@@ -63,19 +63,17 @@ class caption_generation():
 
             generated_captions.append(text)
 
-            # print(answers)
             print(text)
 
         csv_path = os.path.join(output_path, 'prompts.csv')
         prompts_df = pd.read_csv(csv_path)
         prompts_df['Description'] = generated_captions
-        # prompts_df['features'] = answers
         prompts_df['is_human'] = is_human
         prompts_df.to_csv(csv_path, index=False)
 
         return generated_captions
     
-    def generate_one_caption(self, image, prompt, temp, k, min=0, max=20):
+    def generate_one_caption(self, image, prompt, temp, k=50, min=0, max=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
         generated_ids = self.model.generate(**inputs, temperature=temp, top_k=k, min_length=min, max_length=max, do_sample=True)
             #experiment with temperature, top_k, top_p
@@ -101,7 +99,7 @@ class caption_generation():
         answers = []
 
         for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, 0.6, max=25).lower()
+            answer = self.generate_one_caption(image, question, temp=0.6, max=25).lower()
 
             self.filter_vague(question)
 
