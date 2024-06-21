@@ -3,6 +3,7 @@ import torch
 import pandas as pd
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
+from utils import print_title
 
 class CaptionGeneration():
     
@@ -35,19 +36,12 @@ class CaptionGeneration():
     
     def generate_captions(self, prompts, path, output_path):
         start_val = 0
-        counter = '{:0{width}d}'.format(start_val, width=8)
-
         generated_captions = []
         is_human = []
 
         for prompt in prompts:
-            print('PROMPT', counter, '-', prompt)
-
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
-
-            start_val += 1
-            counter = '{:0{width}d}'.format(start_val, width=8)
 
             prompt = "this is a picture of"
             text = self.generate_one_caption(image, prompt, temp=0.7, k=35, min=30, max=40)
@@ -63,6 +57,8 @@ class CaptionGeneration():
 
             generated_captions.append(text)
 
+            print_title('PROMPT', prompt, start_val)
+            start_val += 1
             print(text)
 
         csv_path = os.path.join(output_path, 'prompts.csv')

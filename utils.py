@@ -16,6 +16,10 @@ def fid_distance(x, y):
 def is_distance(x, y):
     pass
     #implement IS
+
+def print_title(typ, name, index):
+    counter = '{:0{width}d}'.format(index, width=8)
+    print('\033[1m' + typ, counter, '-', name + '\033[0m')
     
 def generate_graph():
     pass
