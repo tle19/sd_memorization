@@ -50,7 +50,7 @@ class caption_generation():
             counter = '{:0{width}d}'.format(start_val, width=8)
 
             prompt = "this is a picture of"
-            text = self.generate_one_caption(image, prompt, 0.7, 30, 40)
+            text = self.generate_one_caption(image, prompt, 0.6, 30, 40)
             text = text.replace('.', ',')
 
             if any(human in text for human in self.nouns):
