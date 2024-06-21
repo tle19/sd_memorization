@@ -50,7 +50,7 @@ class caption_generation():
             counter = '{:0{width}d}'.format(start_val, width=8)
 
             prompt = "this is a picture of"
-            text = self.generate_one_caption(image, prompt, 0.5, 30, 40)
+            text = self.generate_one_caption(image, prompt, temp=0.7, k=35, min=30, max=40)
             text = text.replace('.', ',')
 
             if any(human in text for human in self.nouns):
@@ -75,9 +75,9 @@ class caption_generation():
 
         return generated_captions
     
-    def generate_one_caption(self, image, prompt, temp, min=0, max=20):
+    def generate_one_caption(self, image, prompt, temp, k, min=0, max=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
-        generated_ids = self.model.generate(**inputs, temperature=temp, min_length=min, max_length=max, do_sample=True)
+        generated_ids = self.model.generate(**inputs, temperature=temp, top_k=k, min_length=min, max_length=max, do_sample=True)
             #experiment with temperature, top_k, top_p
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
