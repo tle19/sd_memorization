@@ -69,7 +69,7 @@ for index, prompt in enumerate(generated_prompts):
     distances.append(dist)
 
     print_title('IMAGE', prompt, index)
-    print(' ' + dist)
+    print(dist)
 
 prompts_df['Metric'] = distances
 prompts_df.to_csv(csv_path, index=False)
