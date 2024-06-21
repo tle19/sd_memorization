@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 from image_generation import ImageGeneration
 from caption_generation import CaptionGeneration
-from preprocessing import preprocessing
+from preprocessing import preprocessing, save_csv
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Image & Prompt Generation")
@@ -25,7 +25,6 @@ one_prompt = args.prompt
 # Directory Initilization
 if one_prompt != '':
     dataset = 'user_prompt'
-    prompts = [one_prompt]
 
 count = 0
 output_path = os.path.join('output', dataset, f'{dataset}_{count}')
@@ -45,6 +44,9 @@ os.makedirs(image_path2)
 # Dataset Preprocessing
 if one_prompt == '':
     prompts = preprocessing(dataset, output_path, num_ppl)
+else:
+    prompts = [one_prompt]
+    save_csv(pd.DataFrame(prompts), output_path)
 
 print('Initialized', dataset, 'directory')
 print('Images to generate: ', len(prompts))

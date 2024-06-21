@@ -1,9 +1,12 @@
 import os
 import pandas as pd
 
+def save_csv(df, output_path):
+    output_path = os.path.join(output_path, 'prompts.csv')
+    df.to_csv(output_path, index=False)
+
 def preprocessing(dataset, output_path, num_ppl):
     dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
-    output_path = os.path.join(output_path, 'prompts.csv')
     csv_path = find_file(dataset_path)
 
     if '.tsv' in csv_path:    
@@ -23,7 +26,7 @@ def preprocessing(dataset, output_path, num_ppl):
         num_ppl = size
 
     df = df.sample(num_ppl, random_state=40678).sort_values('Name')
-    df.to_csv(output_path, index=False)
+    save_csv(df, output_path)
     prompts = df['Name'].tolist()
 
     return prompts

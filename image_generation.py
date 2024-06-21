@@ -14,12 +14,13 @@ class ImageGeneration:
         start_val = 0
         
         for prompt in prompts:
+            print_title('IMAGE', names[start_val], start_val)
+
             image = self.pipe(prompt).images[0]
 
             image_path = os.path.join(sd_folder_path1, names[start_val] + '.png')
             image.save(image_path)
 
-            print_title('IMAGE', names[start_val], start_val)
             start_val += 1
 
     # def __init__(self, model_id):
