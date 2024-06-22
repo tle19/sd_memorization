@@ -2,6 +2,7 @@ import os
 import torch
 import spacy
 import pandas as pd
+import re
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from utils import print_title
@@ -55,6 +56,7 @@ class CaptionGeneration():
                     answer = self.extract_age(answer)
                 else:
                     answer = self.extract_adjective(answer)
+                    
                 if not answer:
                     answer = self.blip_questions[question]
 
@@ -113,29 +115,26 @@ class CaptionGeneration():
                 return self.comma_splice(token.text)
 
     def extract_age(self, text):
-        proc_text = self.nlp(text)
-        age_number = None
-        
-        for token in proc_text:
-            if token.like_num or self.is_age_text(token.text):
-                age_number = token.text
-                return age_number 
-    
-    def is_age_text(self, token):
+
         age_patterns = [
             'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
+            'twenties', 'thirties', 'forties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties',
             'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
             'eleven', 'twelve', 'teen'
         ]
 
-        if token.endswith('s') and token[:-1].isdigit():
-            return True
+        proc_text = self.nlp(text)
         
-        for pat in age_patterns:
-            if pat in token:
-                return True
-        
-        return False
+        for token in proc_text:
+            if token.like_num:
+                return token.text
+            else:
+                match = re.findall(r"\b\d{2}s\b", token.text)
+                if len(match) > 0:
+                    return token.text
+                for pat in age_patterns:
+                    if pat in text:
+                        return token.text
     
     def add_attribute(self, text, adjective, add_modifier=False):
         proc_text = self.nlp(text)
