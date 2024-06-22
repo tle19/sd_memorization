@@ -22,16 +22,20 @@ dataset = args.dataset
 num_ppl = args.num_ppl
 one_prompt = args.prompt
 
-# Directory Initilization
-if one_prompt != '':
-    dataset = 'user_prompt'
+# Dataset Preprocessing
+if one_prompt == '':
+    df = preprocessing(dataset, num_ppl)
+else:
+    dataset = 'prompts'
+    df = pd.DataFrame([one_prompt], columns=['Name']) 
 
+# Directory Initilization
 count = 0
 output_path = os.path.join('output', dataset, f'{dataset}_{count}')
-
 while os.path.exists(output_path):
     count += 1
-    output_path = os.path.join('output', dataset, f'{dataset}_{count}')
+
+output_path = os.path.join('output', dataset, f'{dataset}_{count}')
 
 os.makedirs(output_path)
 
@@ -41,12 +45,8 @@ image_path2 = os.path.join(output_path, 'images2')
 os.makedirs(image_path1)
 os.makedirs(image_path2)
 
-# Dataset Preprocessing
-if one_prompt == '':
-    prompts = preprocessing(dataset, output_path, num_ppl)
-else:
-    prompts = [one_prompt]
-    save_csv(pd.DataFrame(prompts), output_path)
+save_csv(df, output_path)
+prompts = df['Name'].tolist()
 
 print(f'Initialized {dataset}_{count} directory')
 print('Images to generate: ', len(prompts))

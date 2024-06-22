@@ -76,20 +76,6 @@ class CaptionGeneration():
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         return text.lower()
-    
-    def comma_splice(self, text):
-        pos = text.find(',')
-        if pos != -1:
-            return text[:pos]
-        else:
-            return text
-    
-    def filter_vague(self, answer, question):
-        for bad_ans in self.bad_answers:
-            if bad_ans in answer:
-                default_answer = self.blip_questions[question]
-                answer = answer.replace(bad_ans, default_answer)
-        return answer
 
     def add_questions(self, image):
         answers = []
@@ -121,3 +107,17 @@ class CaptionGeneration():
             answers.append(answer)
 
         return answers
+
+    def comma_splice(self, text):
+        pos = text.find(',')
+        if pos != -1:
+            return text[:pos]
+        else:
+            return text
+    
+    def filter_vague(self, answer, question):
+        for bad_ans in self.bad_answers:
+            if bad_ans in answer:
+                default_answer = self.blip_questions[question]
+                answer = answer.replace(bad_ans, default_answer)
+        return answer

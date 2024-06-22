@@ -5,10 +5,11 @@ def save_csv(df, output_path):
     output_path = os.path.join(output_path, 'prompts.csv')
     df.to_csv(output_path, index=False)
 
-def preprocessing(dataset, output_path, num_ppl):
+def preprocessing(dataset, num_ppl):
     dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
     csv_path = find_file(dataset_path)
 
+    print('Processing Data...')
     if '.tsv' in csv_path:    
         csv_file = pd.read_table(csv_path, sep='\t')
     else:
@@ -26,10 +27,8 @@ def preprocessing(dataset, output_path, num_ppl):
         num_ppl = size
 
     df = df.sample(num_ppl, random_state=40678).sort_values('Name')
-    save_csv(df, output_path)
-    prompts = df['Name'].tolist()
 
-    return prompts
+    return df
 
 def is_english(s):
     return isinstance(s, str) and s.isascii()

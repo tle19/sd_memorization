@@ -11,17 +11,13 @@ class ImageGeneration:
         self.pipe = self.pipe.to(self.device)
 
     def generate_images(self, names, prompts, sd_folder_path1):
-        start_val = 0
-        
-        for prompt in prompts:
-            print_title('IMAGE', names[start_val], start_val)
+        for index, prompt in enumerate(prompts):
+            print_title('IMAGE', names[index], index)
 
             image = self.pipe(prompt).images[0]
 
-            image_path = os.path.join(sd_folder_path1, names[start_val] + '.png')
+            image_path = os.path.join(sd_folder_path1, names[index] + '.png')
             image.save(image_path)
-
-            start_val += 1
 
     # def __init__(self, model_id):
     #     self.device = "cuda" if torch.cuda.is_available() else "cpu"
