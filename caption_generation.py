@@ -132,11 +132,10 @@ class CaptionGeneration():
                 return token.text
             else:
                 print('DEBUG2:', token.text)
-                match = re.search(reg_pattern, token.text)
-                if match:
-                    return token.text
+                if re.search(reg_pattern, token.text):
+                    return token.text.replace('s', '')
                 for pat in age_patterns:
-                    if pat in text:
+                    if pat in token.text:
                         return token.text
     
     def add_attribute(self, text, adjective, add_modifier=False):
