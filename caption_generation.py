@@ -127,11 +127,11 @@ class CaptionGeneration():
             'eleven', 'twelve', 'teen'
         ]
 
-        if token.text.endswith('s') and token.text[:-1].isdigit():
+        if token.endswith('s') and token[:-1].isdigit():
             return True
         
         for pat in age_patterns:
-            if pat in token.text:
+            if pat in token:
                 return True
         
         return False
