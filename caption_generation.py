@@ -24,8 +24,8 @@ class CaptionGeneration():
             }
 
         self.bad_answers = [
-            'i don\'t know', 'i do not know', 'i am not sure', 'i\'m not sure', 
-            'unknown', 'mystery', 'it depends', 'it ain\'t'
+            'i don\'t know', 'i do not know', 'i dont know', 'i am not sure', 'i\'m not sure', 
+            'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
             'it is not a question for you to answer', 
             ]
         
