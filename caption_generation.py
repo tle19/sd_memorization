@@ -37,8 +37,8 @@ class CaptionGeneration():
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
 
-            pre_prompt = "this is a picture of"
-            # pre_prompt = "Question: Can you describe this person? Answer:"
+            # pre_prompt = "this is a picture of"
+            pre_prompt = "Question: Can you describe this person? Answer:"
             text = self.generate_one_caption(image, pre_prompt, temp=1.0, min=30, max=40)
 
             if any(human in text for human in self.human_nouns):
@@ -52,7 +52,6 @@ class CaptionGeneration():
                 answer = self.filter_vague(answer, question)
 
                 if 'age' in question:
-                    print('DEBUG1:', answer)
                     answer = self.extract_age(answer)
                 else:
                     answer = self.extract_adjective(answer)
@@ -131,7 +130,6 @@ class CaptionGeneration():
             if token.like_num:
                 return token.text
             else:
-                print('DEBUG2:', token.text)
                 if re.search(reg_pattern, token.text):
                     return token.text.replace('s', '')
                 for pat in age_patterns:
