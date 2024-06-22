@@ -61,4 +61,3 @@ sd_model.generate_images(prompts, prompts, image_path1)
 generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path)
 
 sd_model.generate_images(prompts, generated_prompts, image_path2)
-

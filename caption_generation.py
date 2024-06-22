@@ -19,7 +19,8 @@ class CaptionGeneration():
             ]
         
         self.subjects = {
-            'they are': "", 'they have': ["hair", "eyes"], 'they\'re': "", 'it\'s': "", 'i am': ""
+            'they are': "", 'they have': ["hair", "eyes"], 
+            'they\'re': "", 'it\'s': "", 'i am': "", 'it is not a question for you to answer': ''
             }
 
         self.bad_answers = [
