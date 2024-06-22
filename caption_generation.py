@@ -31,12 +31,11 @@ class CaptionGeneration():
             ]
         
         self.blip_questions = {
-            'Question: What is their ethnicity? Answer:': "white",
-            # 'Question: What is their approximate age? Answer:': "40",
-            # 'Question: What color is their hair? Answer:': "black",
-            # 'Question: What color is their eyes? Answer:': "brown"
+            'Question: What color is their hair? Answer:': "black",
+            'Question: What color is their eyes? Answer:': "brown",
+            'Question: What is their ethnicity? Answer:': "white"
+            # 'Question: What is their approximate age? Answer:': "40"
             }
-            #   dictionary for default values for question prompts
     
     def generate_captions(self, prompts, path, output_path):
         generated_captions = []
@@ -54,10 +53,20 @@ class CaptionGeneration():
             else:
                 is_human.append(False)
             
-            answers = self.add_questions(image)
-            # text = text + ', ' + ', '.join(answers)
-            text = self.add_adjective(text, answers[0])
+            answers = []
+            for question in self.blip_questions:
+                answer = self.generate_one_caption(image, question, max=15).lower()
 
+                answer = self.filter_vague(answer, question)
+                answer = self.extract_adjective(answer)
+                if not answer:
+                    answer = self.blip_questions[question]
+
+                answers.append(answer)
+
+            text = self.add_adjective(text, f'{answers[0]} hair and {answers[1]} eyes', True)
+            text = self.add_adjective(text, answers[2])
+            text = self.add_adjective(text,)
 
             generated_captions.append(text)
 
@@ -80,42 +89,6 @@ class CaptionGeneration():
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         text = text.lower().replace('.', ',')
         return text
-
-    def add_questions(self, image):
-        answers = []
-
-        for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, max=25).lower()
-
-            answer = self.filter_vague(answer, question)
-
-            answer = self.extract_adjective(answer)
-            print(answer)
-            if not answer:
-                answer = self.blip_questions[question]
-            
-            # if not any(subject in answer for subject in self.subjects):
-            #     answer = list(self.subjects.keys())[0] + ' ' + answer
-            # else:
-            #     for subject in self.subjects:
-            #         if subject in answer:
-            #             answer = answer.replace(subject, list(self.subjects.keys())[0])
-            #             break
-            
-            # for subject in self.subjects:
-            #     features = self.subjects[subject]
-            #     if len(features):
-            #         for feature in features:
-            #             if feature in question:
-            #                 answer = answer.replace(list(self.subjects.keys())[0], subject)
-            #                 answer = f"{answer} {feature}"
-            #                 break
-
-            # answer = self.comma_splice(answer)
-
-            answers.append(answer)
-
-        return answers
     
     def filter_vague(self, answer, question):
         for bad_ans in self.bad_answers:
@@ -132,17 +105,21 @@ class CaptionGeneration():
             if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
                 return token.text
     
-    def add_adjective(self, text, adjective):
+    def add_adjective(self, text, adjective, add_modifier=False):
         processed_text = self.nlp(text)
 
         modified_text = []
-        adjective_inserted = False
+        inserted = False
         
         for token in processed_text:
-            if token.pos_ == 'NOUN' and not adjective_inserted:
-                modified_text.append(adjective)
-                modified_text.append(token.text)
-                adjective_inserted = True
+            if token.pos_ == 'NOUN' and not inserted:
+                if add_modifier:
+                    modified_text.append(token.text)
+                    modified_text.append('with ' + adjective)
+                else:
+                    modified_text.append(adjective)
+                    modified_text.append(token.text)
+                inserted = True
             else:
                 modified_text.append(token.text)
 
