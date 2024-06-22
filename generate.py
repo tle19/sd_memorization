@@ -34,10 +34,10 @@ else:
 # Directory Initilization
 count = 0
 output_path = os.path.join('output', dataset, f'{dataset}_{count}')
+
 while os.path.exists(output_path):
     count += 1
-
-output_path = os.path.join('output', dataset, f'{dataset}_{count}')
+    output_path = os.path.join('output', dataset, f'{dataset}_{count}')
 
 os.makedirs(output_path)
 
