@@ -8,10 +8,10 @@ from utils import print_title
 
 class ImageGeneration:
 
-    def __init__(self, model_id, seed):
+    def __init__(self, model_id, seed, cuda):
         set_seed(seed)
         # self.set_seed(seed)
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = cuda if torch.cuda.is_available() else "cpu"
         self.pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)   
         self.pipe = self.pipe.to(self.device)
 

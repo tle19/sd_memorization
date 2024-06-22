@@ -16,6 +16,7 @@ def parse_args():
     parser.add_argument('--top_p', type=float, default=1.0)
     parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--prompt', type=str, default='')
+    parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args
@@ -24,9 +25,7 @@ args = parse_args()
 dataset = args.dataset
 num_steps = args.num_steps
 one_prompt = args.prompt
-temp = args.temp
-top_k = args.top_k
-top_p = args.top_p
+cuda = args.cuda
 seed = args.seed
 
 # Dataset Preprocessing
@@ -60,12 +59,12 @@ print('Images to generate:', len(prompts))
 
 # Load SD & BLIP Models
 seed = -1 if seed is None else seed
-sd_model = ImageGeneration(args.sd_model, seed)
-blip_model = CaptionGeneration(args.blip_model, seed)
+sd_model = ImageGeneration(args.sd_model, seed, cuda)
+blip_model = CaptionGeneration(args.blip_model, seed, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1, num_steps)
 
-generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, temp, top_k, top_p)
+generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
 
 sd_model.generate_images(prompts, generated_prompts, image_path2, num_steps)
