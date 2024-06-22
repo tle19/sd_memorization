@@ -20,11 +20,12 @@ class CaptionGeneration():
         
         self.subjects = {
             'they are': "", 'they have': ["hair", "eyes"], 
-            'they\'re': "", 'it\'s': "", 'i am': "", 'it is not a question for you to answer': ''
+            'they\'re': "", 'it\'s': "", 'i am': ""
             }
 
         self.bad_answers = [
-            'i don\'t know', 'it depends', 'i am not sure', 'i\'m not sure', 'unknown', 'mystery'
+            'i don\'t know', 'it depends', 'i am not sure', 'i\'m not sure', 'unknown', 'mystery',
+            'it is not a question for you to answer'
             ]
         
         self.blip_questions = {
