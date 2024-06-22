@@ -56,7 +56,9 @@ class CaptionGeneration():
                 is_human.append(False)
             
             answers = self.add_questions(image)
-            text = text + ', ' + ', '.join(answers)
+            # text = text + ', ' + ', '.join(answers)
+            text = self.add_adjective(text, answers[0])
+
 
             generated_captions.append(text)
 
@@ -87,9 +89,10 @@ class CaptionGeneration():
             answer = self.generate_one_caption(image, question, max=25).lower()
 
             answer = self.filter_vague(answer, question)
-            adjectives = self.extract_adjectives(answer)
-            if adjectives:
-                answer = self.add_adjective(answer, adjectives[0])
+            answer = self.extract_adjectives(answer)
+            if not answer:
+                answer = self.blip_questions[question]
+            
             # if not any(subject in answer for subject in self.subjects):
             #     answer = list(self.subjects.keys())[0] + ' ' + answer
             # else:
@@ -107,7 +110,7 @@ class CaptionGeneration():
             #                 answer = f"{answer} {feature}"
             #                 break
 
-            answer = self.comma_splice(answer)
+            # answer = self.comma_splice(answer)
 
             answers.append(answer)
 
