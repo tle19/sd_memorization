@@ -47,11 +47,11 @@ class CaptionGeneration():
             
             answers = []
             for question in self.blip_questions:
-                answer = self.generate_one_caption(image, question, max=15).lower()
+                answer = self.generate_one_caption(image, question, max=25).lower()
                 answer = self.filter_vague(answer, question)
 
                 if 'age' in question:
-                    print(answer)
+                    print('DEBUG1:', answer)
                     answer = self.extract_age(answer)
                 else:
                     answer = self.extract_adjective(answer)
