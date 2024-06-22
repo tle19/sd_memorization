@@ -68,7 +68,7 @@ class CaptionGeneration():
 
         return generated_captions
     
-    def generate_one_caption(self, image, prompt, temp, k=50, min=0, max=20):
+    def generate_one_caption(self, image, prompt, temp=1.0, k=50, min=0, max=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
         generated_ids = self.model.generate(**inputs, temperature=temp, top_k=k, min_length=min, max_length=max, do_sample=True)
             #experiment with temperature, top_k, top_p
@@ -80,7 +80,7 @@ class CaptionGeneration():
         answers = []
 
         for question in self.blip_questions:
-            answer = self.generate_one_caption(image, question, temp=0.5, max=25).lower()
+            answer = self.generate_one_caption(image, question, max=25).lower()
 
             answer = self.filter_vague(answer, question)
 
