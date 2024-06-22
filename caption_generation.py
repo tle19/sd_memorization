@@ -6,7 +6,7 @@ import re
 from PIL import Image
 from transformers import set_seed
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
-from utils import print_title
+from utils import print_title, punc_splice
 
 class CaptionGeneration():
     
@@ -119,7 +119,7 @@ class CaptionGeneration():
 
         for token in proc_text:
             if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
-                return self.comma_splice(token.text)
+                return punc_splice(',', token.text)
 
     def extract_age(self, text):
 
@@ -158,10 +158,3 @@ class CaptionGeneration():
         modified_text = ' '.join(modified_text)
 
         return modified_text
-    
-    def comma_splice(self, text):
-        pos = text.find(',')
-        if pos != -1:
-            return text[:pos]
-        else:
-            return text
