@@ -5,7 +5,7 @@ def save_csv(df, output_path):
     output_path = os.path.join(output_path, 'prompts.csv')
     df.to_csv(output_path, index=False)
 
-def preprocessing(dataset, num_ppl):
+def preprocessing(dataset, num_ppl, seed):
     dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
     csv_path = find_file(dataset_path)
 
@@ -26,7 +26,7 @@ def preprocessing(dataset, num_ppl):
     if num_ppl > size:
         num_ppl = size
 
-    df = df.sample(num_ppl, random_state=40678).sort_values('Name')
+    df = df.sample(num_ppl, random_state=seed).sort_values('Name')
 
     return df
 

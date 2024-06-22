@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument('--dataset', type=str, default="imdb")
     parser.add_argument('--num_ppl', type=int, default=99999999)
     parser.add_argument('--prompt', type=str, default='')
+    parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args
 
@@ -21,10 +22,11 @@ blip_id = args.blip_model
 dataset = args.dataset
 num_ppl = args.num_ppl
 one_prompt = args.prompt
+seed = args.seed
 
 # Dataset Preprocessing
 if one_prompt == '':
-    df = preprocessing(dataset, num_ppl)
+    df = preprocessing(dataset, num_ppl, seed)
 else:
     dataset = 'prompts'
     df = pd.DataFrame([one_prompt], columns=['Name']) 
@@ -52,7 +54,7 @@ print(f'Initialized {dataset}_{count} directory')
 print('Images to generate: ', len(prompts))
 
 # Load SD & BLIP Models
-sd_model = ImageGeneration(sd_id)
+sd_model = ImageGeneration(sd_id, seed)
 blip_model = CaptionGeneration(blip_id)
 
 # Image and Prompt Generation
