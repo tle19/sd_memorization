@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument('--temp', type=float, default=1.0)
     parser.add_argument('--top_k', type=int, default=50)
     parser.add_argument('--top_p', type=float, default=1.0)
+    parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--prompt', type=str, default='')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
@@ -21,6 +22,7 @@ def parse_args():
 
 args = parse_args()
 dataset = args.dataset
+num_steps = args.num_steps
 one_prompt = args.prompt
 temp = args.temp
 top_k = args.top_k
@@ -62,8 +64,8 @@ sd_model = ImageGeneration(args.sd_model, seed)
 blip_model = CaptionGeneration(args.blip_model, seed)
 
 # Image and Prompt Generation
-sd_model.generate_images(prompts, prompts, image_path1)
+sd_model.generate_images(prompts, prompts, image_path1, num_steps)
 
 generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, temp, top_k, top_p)
 
-sd_model.generate_images(prompts, generated_prompts, image_path2)
+sd_model.generate_images(prompts, generated_prompts, image_path2, num_steps)
