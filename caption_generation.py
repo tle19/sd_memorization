@@ -15,28 +15,19 @@ class CaptionGeneration():
         self.model.to(self.device)
         self.nlp = spacy.load('en_core_web_sm')
 
-        self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her',
-            'person', 'people', 'player', 'players', 'they', 'them', 'their', 'it'
-            ]
-        
-        self.subjects = {
-            'they are': "", 'they have': ["hair", "eyes"], 
-            'they\'re': "", 'it\'s': "", 'i am': ""
-            }
-
-        self.bad_answers = [
-            'i don\'t know', 'i do not know', 'i dont know', 'i am not sure', 'i\'m not sure', 
-            'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
-            ]
-        
         self.blip_questions = {
             'Question: What color is their hair? Answer:': "black",
             'Question: What color is their eyes? Answer:': "brown",
-            'Question: What is their ethnicity? Answer:': "white"
-            # 'Question: What is their approximate age? Answer:': "40"
-            }
-    
+            'Question: What is their ethnicity? Answer:': "white",
+            'Question: What is their approximate age? Answer:': "40"
+        }
+
+        self.human_nouns = [
+            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her',
+            'person', 'people', 'actor', 'actress', 'player', 'players', 
+            'they', 'them', 'their', 'it'
+        ]
+        
     def generate_captions(self, prompts, path, output_path):
         generated_captions = []
         is_human = []
@@ -59,14 +50,24 @@ class CaptionGeneration():
                 answer = self.generate_one_caption(image, question, max=15).lower()
 
                 answer = self.filter_vague(answer, question)
-                answer = self.extract_adjective(answer)
+
+                if 'age' in question:
+                    answer = self.extract_age(answer)
+                else:
+                    answer = self.extract_adjective(answer)
+
                 if not answer:
                     answer = self.blip_questions[question]
 
                 answers.append(answer)
 
-            text = self.add_adjective(text, f'{answers[0]} hair and {answers[1]} eyes', True)
-            text = self.add_adjective(text, answers[2])
+            hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
+            ethnicity = answers[2]
+            age = f'{answers[3]} year old'
+            
+            text = self.add_attribute(text, hair_and_eyes, True)
+            text = self.add_attribute(text, ethnicity)
+            text = self.add_attribute(text, age)
 
             generated_captions.append(text)
 
@@ -91,7 +92,13 @@ class CaptionGeneration():
         return text
     
     def filter_vague(self, answer, question):
-        for bad_ans in self.bad_answers:
+
+        bad_answers = [
+            'i don\'t know', 'i do not know', 'i dont know', 'i am not sure', 'i\'m not sure', 
+            'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
+        ]
+        
+        for bad_ans in bad_answers:
             if bad_ans in answer:
                 default_answer = self.blip_questions[question]
                 answer = answer.replace(bad_ans, default_answer)
@@ -99,30 +106,57 @@ class CaptionGeneration():
         return answer
     
     def extract_adjective(self, text):
-        processed_text = self.nlp(text)
+        proc_text = self.nlp(text)
 
-        for token in processed_text:
+        for token in proc_text:
             if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
-                return token.text
+                return self.comma_splice(self, token.text)
+
+    def extract_age(self, text):
+        proc_text = self.nlp(text)
+        age_number = None
+        
+        for token in proc_text:
+            if token.like_num or self.is_age_text(token.text):
+                age_number = token.text
+                break
+        
+        return age_number
     
-    def add_adjective(self, text, adjective, add_modifier=False):
-        processed_text = self.nlp(text)
+    def is_age_text(self, token):
+        age_patterns = [
+            'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
+            'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+            'eleven', 'twelve', 'teen'
+        ]
+
+        if token.text.endswith('s') and token.text[:-1].isdigit():
+            return True
+        
+        for pat in age_patterns:
+            if pat in token.text:
+                return True
+        
+        return False
+    
+    def add_attribute(self, text, adjective, add_modifier=False):
+        proc_text = self.nlp(text)
 
         modified_text = []
         inserted = False
         
-        for token in processed_text:
+        for token in proc_text:
             if token.pos_ == 'NOUN' and not inserted:
                 if add_modifier:
                     modified_text.append(token.text)
-                    modified_text.append('with ' + adjective)
+                    modified_text.append(adjective)
                 else:
                     modified_text.append(adjective)
                     modified_text.append(token.text)
                 inserted = True
             else:
                 modified_text.append(token.text)
-                
+
         modified_text = ' '.join(modified_text)
 
         return modified_text

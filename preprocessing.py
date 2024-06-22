@@ -54,6 +54,3 @@ def column_name(dataset):
         return datasets[dataset]
     else:
         raise FileNotFoundError(dataset, 'dataset not located')
-    
-def find_avg_age(dataset):
-    return
