@@ -28,7 +28,6 @@ class CaptionGeneration():
         self.bad_answers = [
             'i don\'t know', 'i do not know', 'i dont know', 'i am not sure', 'i\'m not sure', 
             'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
-            'it is not a question for you to answer', 
             ]
         
         self.blip_questions = {
@@ -57,7 +56,7 @@ class CaptionGeneration():
             
             answers = self.add_questions(image)
             # text = text + ', ' + ', '.join(answers)
-            text = self.add_adjective(text, answers[0])
+            text = self.add_adjectives(text, answers[0])
 
 
             generated_captions.append(text)
@@ -134,7 +133,7 @@ class CaptionGeneration():
     
         return adjectives
     
-    def add_adjective(self, text, adjective):
+    def add_adjectives(self, text, adjective):
         processed_text = self.nlp(text)
 
         modified_text = []
@@ -148,6 +147,7 @@ class CaptionGeneration():
             else:
                 modified_text.append(token.text)
 
+        print(modified_text)
         modified_text = ' '.join(modified_text)
 
         return modified_text
