@@ -24,8 +24,9 @@ class CaptionGeneration():
             }
 
         self.bad_answers = [
-            'i don\'t know', 'it depends', 'i am not sure', 'i\'m not sure', 'unknown', 'mystery',
-            'it is not a question for you to answer'
+            'i don\'t know', 'i do not know', 'i am not sure', 'i\'m not sure', 
+            'unknown', 'mystery', 'it depends', 'it ain\'t'
+            'it is not a question for you to answer', 
             ]
         
         self.blip_questions = {
@@ -120,4 +121,5 @@ class CaptionGeneration():
             if bad_ans in answer:
                 default_answer = self.blip_questions[question]
                 answer = answer.replace(bad_ans, default_answer)
+                break
         return answer
