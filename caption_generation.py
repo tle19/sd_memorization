@@ -56,7 +56,7 @@ class CaptionGeneration():
                     answer = self.extract_age(answer)
                 else:
                     answer = self.extract_adjective(answer)
-                    
+
                 if not answer:
                     answer = self.blip_questions[question]
 
@@ -129,7 +129,7 @@ class CaptionGeneration():
             if token.like_num:
                 return token.text
             else:
-                match = re.findall(r"\b\d{2}s\b", token.text)
+                match = re.findall(r"\b\d+s\b", token.text)
                 if len(match) > 0:
                     return token.text
                 for pat in age_patterns:
