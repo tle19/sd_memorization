@@ -23,10 +23,11 @@ class ImageGeneration:
             image.save(image_path)
 
     def set_seed(self, seed):
-        if seed is not None:
-            torch.manual_seed(seed)
-            random.seed(seed)
-            np.random.seed(seed)
+        if seed is None:
+            seed = -1
+        torch.manual_seed(seed)
+        random.seed(seed)
+        np.random.seed(seed)
 
     # def __init__(self, model_id):
     #     self.device = "cuda" if torch.cuda.is_available() else "cpu"
