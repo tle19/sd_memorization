@@ -48,9 +48,8 @@ class CaptionGeneration():
             answers = []
             for question in self.blip_questions:
                 answer = self.generate_one_caption(image, question, max=15).lower()
-                print("DEBUG1:", answer)
                 answer = self.filter_vague(answer, question)
-                print("DEBUG2:", answer)
+
                 if 'age' in question:
                     answer = self.extract_age(answer)
                 else:
@@ -102,7 +101,9 @@ class CaptionGeneration():
             if bad_ans in answer:
                 default_answer = self.blip_questions[question]
                 answer = answer.replace(bad_ans, default_answer)
-                return answer
+                break
+
+        return answer
   
     def extract_adjective(self, text):
         proc_text = self.nlp(text)
