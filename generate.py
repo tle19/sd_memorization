@@ -11,7 +11,7 @@ def parse_args():
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
     parser.add_argument('--num_ppl', type=int, default=99999999)
-    parser.add_argument('--temp', type=float, default=1.1)
+    parser.add_argument('--temp', type=float, default=1.0)
     parser.add_argument('--top_k', type=int, default=50)
     parser.add_argument('--top_p', type=float, default=1.0)
     parser.add_argument('--prompt', type=str, default='')

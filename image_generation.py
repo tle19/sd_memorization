@@ -26,7 +26,7 @@ class ImageGeneration:
         for index, prompt in enumerate(prompts):
             print_title('IMAGE', names[index], index)
 
-            image = self.pipe(prompt, width=1024, height=1024).images[0]
+            image = self.pipe(prompt, width=512, height=512).images[0]
 
             image_path = os.path.join(sd_folder_path1, names[index] + '.png')
             image.save(image_path)

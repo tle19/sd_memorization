@@ -23,7 +23,6 @@ class CaptionGeneration():
             'Question: What color is their eyes? Answer:': "brown",
             'Question: What is their approximate age? Answer:': "35",
             'Question: What is their ethnicity? Answer:': "white"
-           
         }
 
         self.human_nouns = [
@@ -76,12 +75,10 @@ class CaptionGeneration():
                 answers.append(answer)
 
             hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-            age = f'{answers[2]} year old'
-            ethnicity = answers[3]
+            age_and_ethnicity = f'{answers[2]} year old {answers[3]}'
             
             text = self.add_attribute(text, hair_and_eyes, True)
-            text = self.add_attribute(text, age)
-            text = self.add_attribute(text, ethnicity)
+            text = self.add_attribute(text, age_and_ethnicity)
 
             generated_captions.append(text)
 
