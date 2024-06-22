@@ -1,7 +1,7 @@
 import os
 import torch
-import spacy
 import pandas as pd
+import spacy
 import re
 from PIL import Image
 from transformers import set_seed

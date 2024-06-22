@@ -1,7 +1,5 @@
 import os
 import torch
-import random
-import numpy as np
 from transformers import set_seed
 from diffusers import StableDiffusionPipeline
 from utils import print_title
