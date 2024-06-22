@@ -35,11 +35,10 @@ class CaptionGeneration():
             #   dictionary for default values for question prompts
     
     def generate_captions(self, prompts, path, output_path):
-        start_val = 0
         generated_captions = []
         is_human = []
 
-        for prompt in prompts:
+        for index, prompt in enumerate(prompts):
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
 
@@ -57,8 +56,7 @@ class CaptionGeneration():
 
             generated_captions.append(text)
 
-            print_title('PROMPT', prompt, start_val)
-            start_val += 1
+            print_title('PROMPT', prompt, index)
             print(text)
 
         csv_path = os.path.join(output_path, 'prompts.csv')
