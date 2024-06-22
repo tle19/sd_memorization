@@ -56,7 +56,7 @@ class CaptionGeneration():
             
             answers = self.add_questions(image)
             # text = text + ', ' + ', '.join(answers)
-            text = self.add_adjectives(text, answers[0])
+            text = self.add_adjective(text, answers[0])
 
 
             generated_captions.append(text)
@@ -88,7 +88,9 @@ class CaptionGeneration():
             answer = self.generate_one_caption(image, question, max=25).lower()
 
             answer = self.filter_vague(answer, question)
-            answer = self.extract_adjectives(answer)
+
+            answer = self.extract_adjective(answer)
+            print(answer)
             if not answer:
                 answer = self.blip_questions[question]
             
@@ -123,18 +125,14 @@ class CaptionGeneration():
                 break
         return answer
     
-    def extract_adjectives(self, text):
+    def extract_adjective(self, text):
         processed_text = self.nlp(text)
 
-        adjectives = []
         for token in processed_text:
             if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
-                adjectives.append(token.text)
-
-        adjectives = ' '.join(adjectives)
-        return adjectives
+                return token.text
     
-    def add_adjectives(self, text, adjective):
+    def add_adjective(self, text, adjective):
         processed_text = self.nlp(text)
 
         modified_text = []
