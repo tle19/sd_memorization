@@ -12,7 +12,7 @@ class CaptionGeneration():
     
     def __init__(self, model_id, seed, cuda):
         set_seed(seed)
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = cuda if torch.cuda.is_available() else "cpu"
         self.model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16)
         self.processor = Blip2Processor.from_pretrained(model_id, torch_dtype=torch.float16)
         self.model.to(self.device)
@@ -21,8 +21,8 @@ class CaptionGeneration():
         self.blip_questions = {
             'Question: What color is their hair? Answer:': "black",
             'Question: What color is their eyes? Answer:': "brown",
-            'Question: What is their approximate age? Answer:': "35",
-            'Question: What is their ethnicity? Answer:': "white"
+            'Question: What is their ethnicity? Answer:': "white",
+            'Question: What is their approximate age? Answer:': "35"
         }
 
         self.human_nouns = [
@@ -75,10 +75,12 @@ class CaptionGeneration():
                 answers.append(answer)
 
             hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-            age_and_ethnicity = f'{answers[2]} year old {answers[3]}'
+            ethnicity = answers[2]
+            age = f'{answers[3]} year old'
             
             text = self.add_attribute(text, hair_and_eyes, True)
-            text = self.add_attribute(text, age_and_ethnicity)
+            text = self.add_attribute(text, ethnicity)
+            text = self.add_attribute(text, age)
 
             generated_captions.append(text)
 
