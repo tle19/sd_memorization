@@ -13,6 +13,13 @@ class ImageGeneration:
         self.pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)   
         self.pipe = self.pipe.to(self.device)
 
+    def set_seed(self, seed):
+        if seed is None:
+            seed = -1
+        torch.manual_seed(seed)
+        random.seed(seed)
+        np.random.seed(seed)
+
     def generate_images(self, names, prompts, sd_folder_path1):
         for index, prompt in enumerate(prompts):
             print_title('IMAGE', names[index], index)
@@ -21,13 +28,6 @@ class ImageGeneration:
 
             image_path = os.path.join(sd_folder_path1, names[index] + '.png')
             image.save(image_path)
-
-    def set_seed(self, seed):
-        if seed is None:
-            seed = -1
-        torch.manual_seed(seed)
-        random.seed(seed)
-        np.random.seed(seed)
 
     # def __init__(self, model_id):
     #     self.device = "cuda" if torch.cuda.is_available() else "cpu"

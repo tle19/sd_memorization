@@ -24,8 +24,8 @@ class CaptionGeneration():
 
         self.human_nouns = [
             'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her',
-            'person', 'people', 'actor', 'actress', 'player', 'players', 
-            'they', 'them', 'their', 'it'
+            'child', 'children', 'adult', 'adults', 'baby', 'babies',
+            'person', 'people', 'actor', 'actress', 'player', 'players'
         ]
         
     def generate_captions(self, prompts, path, output_path):
@@ -48,9 +48,9 @@ class CaptionGeneration():
             answers = []
             for question in self.blip_questions:
                 answer = self.generate_one_caption(image, question, max=15).lower()
-
+                print("DEBUG1:", answer)
                 answer = self.filter_vague(answer, question)
-
+                print("DEBUG2:", answer)
                 if 'age' in question:
                     answer = self.extract_age(answer)
                 else:
@@ -164,4 +164,3 @@ class CaptionGeneration():
             return text[:pos]
         else:
             return text
-        
