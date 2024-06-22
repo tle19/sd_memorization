@@ -37,9 +37,8 @@ class CaptionGeneration():
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
 
-            # pre_prompt = "this is a picture of"
-            pre_prompt = "Question: Can you describe this person? Answer:"
-            text = self.generate_one_caption(image, pre_prompt, temp=1.0, min=30, max=40)
+            pre_prompt = "this is a picture of"
+            text = self.generate_one_caption(image, pre_prompt, temp=1.0, k=50, min=30, max=40)
 
             if any(human in text for human in self.human_nouns):
                 is_human.append(True)
