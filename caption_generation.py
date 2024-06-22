@@ -46,6 +46,7 @@ class CaptionGeneration():
             image = Image.open(image_path)
 
             pre_prompt = "this is a picture of"
+            # pre_prompt = "Question: Can you describe this person? Answer:"
             text = self.generate_one_caption(image, pre_prompt, temp=0.9, min=30, max=40)
 
             if any(human in text for human in self.human_nouns):
@@ -66,7 +67,6 @@ class CaptionGeneration():
 
             text = self.add_adjective(text, f'{answers[0]} hair and {answers[1]} eyes', True)
             text = self.add_adjective(text, answers[2])
-            text = self.add_adjective(text,)
 
             generated_captions.append(text)
 
@@ -122,8 +122,7 @@ class CaptionGeneration():
                 inserted = True
             else:
                 modified_text.append(token.text)
-
-        print(modified_text)
+                
         modified_text = ' '.join(modified_text)
 
         return modified_text
