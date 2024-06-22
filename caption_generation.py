@@ -15,7 +15,7 @@ class CaptionGeneration():
         self.model.to(self.device)
         self.nlp = spacy.load('en_core_web_sm')
 
-        self.nouns = [
+        self.human_nouns = [
             'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her',
             'person', 'people', 'player', 'players', 'they', 'them', 'their', 'it'
             ]
@@ -49,7 +49,7 @@ class CaptionGeneration():
             pre_prompt = "this is a picture of"
             text = self.generate_one_caption(image, pre_prompt, temp=0.9, min=30, max=40)
 
-            if any(human in text for human in self.nouns):
+            if any(human in text for human in self.human_nouns):
                 is_human.append(True)
             else:
                 is_human.append(False)
@@ -130,7 +130,8 @@ class CaptionGeneration():
         for token in processed_text:
             if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
                 adjectives.append(token.text)
-    
+
+        adjectives = ' '.join(adjectives)
         return adjectives
     
     def add_adjectives(self, text, adjective):
