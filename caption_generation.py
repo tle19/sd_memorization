@@ -125,12 +125,14 @@ class CaptionGeneration():
 
         proc_text = self.nlp(text)
         
+        regex_pattern = r"\b\d+s\b"
+
         for token in proc_text:
             if token.like_num:
                 return token.text
             else:
-                match = re.findall(r"\b\d+s\b", token.text)
-                if len(match) > 0:
+                match = re.search(regex_pattern, token.text)
+                if match:
                     return token.text
                 for pat in age_patterns:
                     if pat in text:
