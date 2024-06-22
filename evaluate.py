@@ -62,7 +62,6 @@ for index, prompt in enumerate(generated_prompts):
         y = os.path.join(output_path, 'images2', prompt + '.png')
 
         dist = eval_metric(image_feature(x), image_feature(y))
-
     else:
         dist = -1
 

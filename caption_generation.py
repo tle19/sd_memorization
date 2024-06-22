@@ -102,9 +102,8 @@ class CaptionGeneration():
             if bad_ans in answer:
                 default_answer = self.blip_questions[question]
                 answer = answer.replace(bad_ans, default_answer)
-                break
-        return answer
-    
+                return answer
+  
     def extract_adjective(self, text):
         proc_text = self.nlp(text)
 
@@ -119,9 +118,7 @@ class CaptionGeneration():
         for token in proc_text:
             if token.like_num or self.is_age_text(token.text):
                 age_number = token.text
-                break
-        
-        return age_number
+                return age_number 
     
     def is_age_text(self, token):
         age_patterns = [
