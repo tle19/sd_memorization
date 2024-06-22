@@ -61,6 +61,7 @@ class CaptionGeneration():
                 answers.append(answer)
 
             hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
+            hair_and_eyes = f'with {answers[0]} hair'
             ethnicity = answers[2]
             age = f'{answers[3]} year old'
             
