@@ -1,5 +1,6 @@
 import os
 import torch
+import spacy
 import pandas as pd
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
@@ -12,10 +13,11 @@ class CaptionGeneration():
         self.model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16)
         self.processor = Blip2Processor.from_pretrained(model_id, torch_dtype=torch.float16)
         self.model.to(self.device)
+        self.nlp = spacy.load('en_core_web_sm')
 
         self.nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl',
-            'person', 'people', 'player', 'players'
+            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her',
+            'person', 'people', 'player', 'players', 'they', 'them', 'their', 'it'
             ]
         
         self.subjects = {
@@ -31,9 +33,9 @@ class CaptionGeneration():
         
         self.blip_questions = {
             'Question: What is their ethnicity? Answer:': "white",
-            'Question: What is their approximate age? Answer:': "40",
-            'Question: What color is their hair? Answer:': "black",
-            'Question: What color is their eyes? Answer:': "brown"
+            # 'Question: What is their approximate age? Answer:': "40",
+            # 'Question: What color is their hair? Answer:': "black",
+            # 'Question: What color is their eyes? Answer:': "brown"
             }
             #   dictionary for default values for question prompts
     
@@ -45,9 +47,8 @@ class CaptionGeneration():
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
 
-            prompt = "this is a picture of"
-            text = self.generate_one_caption(image, prompt, temp=0.9, min=30, max=40)
-            text = text.replace('.', ',')
+            pre_prompt = "this is a picture of"
+            text = self.generate_one_caption(image, pre_prompt, temp=0.9, min=30, max=40)
 
             if any(human in text for human in self.nouns):
                 is_human.append(True)
@@ -76,7 +77,8 @@ class CaptionGeneration():
             #experiment with temperature, top_k, top_p
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-        return text.lower()
+        text = text.lower().replace('.', ',')
+        return text
 
     def add_questions(self, image):
         answers = []
@@ -85,36 +87,31 @@ class CaptionGeneration():
             answer = self.generate_one_caption(image, question, max=25).lower()
 
             answer = self.filter_vague(answer, question)
-
-            if not any(subject in answer for subject in self.subjects):
-                answer = list(self.subjects.keys())[0] + ' ' + answer
-            else:
-                for subject in self.subjects:
-                    if subject in answer:
-                        answer = answer.replace(subject, list(self.subjects.keys())[0])
-                        break
+            adjectives = self.extract_adjectives(answer)
+            if adjectives:
+                answer = self.add_adjective(answer, adjectives[0])
+            # if not any(subject in answer for subject in self.subjects):
+            #     answer = list(self.subjects.keys())[0] + ' ' + answer
+            # else:
+            #     for subject in self.subjects:
+            #         if subject in answer:
+            #             answer = answer.replace(subject, list(self.subjects.keys())[0])
+            #             break
             
-            for subject in self.subjects:
-                features = self.subjects[subject]
-                if len(features):
-                    for feature in features:
-                        if feature in question:
-                            answer = answer.replace(list(self.subjects.keys())[0], subject)
-                            answer = f"{answer} {feature}"
-                            break
+            # for subject in self.subjects:
+            #     features = self.subjects[subject]
+            #     if len(features):
+            #         for feature in features:
+            #             if feature in question:
+            #                 answer = answer.replace(list(self.subjects.keys())[0], subject)
+            #                 answer = f"{answer} {feature}"
+            #                 break
 
             answer = self.comma_splice(answer)
 
             answers.append(answer)
 
         return answers
-
-    def comma_splice(self, text):
-        pos = text.find(',')
-        if pos != -1:
-            return text[:pos]
-        else:
-            return text
     
     def filter_vague(self, answer, question):
         for bad_ans in self.bad_answers:
@@ -123,3 +120,39 @@ class CaptionGeneration():
                 answer = answer.replace(bad_ans, default_answer)
                 break
         return answer
+    
+    def extract_adjectives(self, text):
+        processed_text = self.nlp(text)
+
+        adjectives = []
+        for token in processed_text:
+            if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
+                adjectives.append(token.text)
+    
+        return adjectives
+    
+    def add_adjective(self, text, adjective):
+        processed_text = self.nlp(text)
+
+        modified_text = []
+        adjective_inserted = False
+        
+        for token in processed_text:
+            if token.pos_ == 'NOUN' and not adjective_inserted:
+                modified_text.append(adjective)
+                modified_text.append(token.text)
+                adjective_inserted = True
+            else:
+                modified_text.append(token.text)
+
+        modified_text = ' '.join(modified_text)
+
+        return modified_text
+    
+    def comma_splice(self, text):
+        pos = text.find(',')
+        if pos != -1:
+            return text[:pos]
+        else:
+            return text
+        
