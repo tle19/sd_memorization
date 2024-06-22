@@ -11,22 +11,25 @@ def parse_args():
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
     parser.add_argument('--num_ppl', type=int, default=99999999)
+    parser.add_argument('--temp', type=float, default=1.1)
+    parser.add_argument('--top_k', type=int, default=50)
+    parser.add_argument('--top_p', type=float, default=1.0)
     parser.add_argument('--prompt', type=str, default='')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args
 
 args = parse_args()
-sd_id = args.sd_model
-blip_id = args.blip_model
 dataset = args.dataset
-num_ppl = args.num_ppl
 one_prompt = args.prompt
+temp = args.temp
+top_k = args.top_k
+top_p = args.top_p
 seed = args.seed
 
 # Dataset Preprocessing
 if one_prompt == '':
-    df = preprocessing(dataset, num_ppl, seed)
+    df = preprocessing(dataset, args.num_ppl, seed)
 else:
     dataset = 'prompts'
     df = pd.DataFrame([one_prompt], columns=['Name']) 
@@ -54,12 +57,13 @@ print(f'Initialized {dataset}_{count} directory')
 print('Images to generate:', len(prompts))
 
 # Load SD & BLIP Models
-sd_model = ImageGeneration(sd_id, seed)
-blip_model = CaptionGeneration(blip_id)
+seed = -1 if seed is None else seed
+sd_model = ImageGeneration(args.sd_model, seed)
+blip_model = CaptionGeneration(args.blip_model, seed)
 
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1)
 
-generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path)
+generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, temp, top_k, top_p)
 
 sd_model.generate_images(prompts, generated_prompts, image_path2)

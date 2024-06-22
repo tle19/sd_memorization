@@ -3,6 +3,7 @@ import argparse
 import torch
 import pandas as pd
 import numpy as np
+from transformers import set_seed
 from transformers import CLIPModel, CLIPProcessor
 from PIL import Image
 from utils import *
@@ -27,6 +28,7 @@ def parse_args():
     parser.add_argument('--metric', type=metric, default="cosine")
     parser.add_argument('--dataset', type=str, default="imdb")
     parser.add_argument('--folder', type=int, default=0)
+    parser.add_argument('--seed', type=int, default=42)
     args = parser.parse_args()
     return args
 
@@ -35,6 +37,8 @@ model_id = args.model_id
 eval_metric = args.metric
 dataset = args.dataset
 folder = args.folder
+
+set_seed(args.seed)
 
 model = CLIPModel.from_pretrained(model_id)
 processor = CLIPProcessor.from_pretrained(model_id)
