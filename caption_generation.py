@@ -46,7 +46,7 @@ class CaptionGeneration():
             image = Image.open(image_path)
 
             prompt = "this is a picture of"
-            text = self.generate_one_caption(image, prompt, temp=0.8, min=30, max=40)
+            text = self.generate_one_caption(image, prompt, temp=0.9, min=30, max=40)
             text = text.replace('.', ',')
 
             if any(human in text for human in self.nouns):
