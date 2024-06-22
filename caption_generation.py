@@ -38,7 +38,7 @@ class CaptionGeneration():
 
             pre_prompt = "this is a picture of"
             # pre_prompt = "Question: Can you describe this person? Answer:"
-            text = self.generate_one_caption(image, pre_prompt, temp=0.9, min=30, max=40)
+            text = self.generate_one_caption(image, pre_prompt, temp=1.0, min=30, max=40)
 
             if any(human in text for human in self.human_nouns):
                 is_human.append(True)
@@ -54,7 +54,6 @@ class CaptionGeneration():
                     answer = self.extract_age(answer)
                 else:
                     answer = self.extract_adjective(answer)
-
                 if not answer:
                     answer = self.blip_questions[question]
 
@@ -110,7 +109,7 @@ class CaptionGeneration():
 
         for token in proc_text:
             if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
-                return self.comma_splice(self, token.text)
+                return self.comma_splice(token.text)
 
     def extract_age(self, text):
         proc_text = self.nlp(text)
