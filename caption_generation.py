@@ -51,6 +51,7 @@ class CaptionGeneration():
                 answer = self.filter_vague(answer, question)
 
                 if 'age' in question:
+                    print(answer)
                     answer = self.extract_age(answer)
                 else:
                     answer = self.extract_adjective(answer)

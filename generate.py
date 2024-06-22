@@ -51,7 +51,7 @@ save_csv(df, output_path)
 prompts = df['Name'].tolist()
 
 print(f'Initialized {dataset}_{count} directory')
-print('Images to generate: ', len(prompts))
+print('Images to generate:', len(prompts))
 
 # Load SD & BLIP Models
 sd_model = ImageGeneration(sd_id, seed)
