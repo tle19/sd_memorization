@@ -18,7 +18,7 @@ def preprocessing(dataset, num_ppl, seed):
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
 
-    regex_pattern = r'\([^()]+\)'
+    regex_pattern = r'^/.*$'
 
     df = df.rename(columns={original_name: 'Name'})
     df = df[~df['Name'].str.contains(regex_pattern, regex=True)]
