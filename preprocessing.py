@@ -11,9 +11,9 @@ def preprocessing(dataset, num_ppl, seed):
 
     print('Processing Data...')
     if '.tsv' in csv_path:    
-        csv_file = pd.read_csv(csv_path, sep='\t', na_values='\\N')
+        csv_file = pd.read_csv(csv_path, sep='\t', na_values=['\\N', ''])
     else:
-        csv_file = pd.read_csv(csv_path)
+        csv_file = pd.read_csv(csv_path, na_values=['\\N', ''])
 
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
