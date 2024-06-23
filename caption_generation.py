@@ -26,9 +26,9 @@ class CaptionGeneration():
         }
 
         self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her',
+            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her', 'lady',
             'child', 'children', 'adult', 'adults', 'baby', 'babies',
-            'person', 'people', 'actor', 'actress', 'player', 'players'
+            'person', 'people', 'actor', 'actress', 'lady', 'players'
         ]
 
         self.bad_answers = [
@@ -54,7 +54,7 @@ class CaptionGeneration():
             pre_prompt = "this is a picture of"
             text = self.generate_one_caption(image, pre_prompt, temp=temp, top_k=k, top_p=p, min=30, max=40)
 
-            if any(human in text for human in self.human_nouns):
+            if any(word in self.human_nouns for word in text.split()):
                 is_human.append(True)
             else:
                 is_human.append(False)
