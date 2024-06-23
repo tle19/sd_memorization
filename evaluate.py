@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument('--model_id', type=str, default="openai/clip-vit-base-patch32")
     parser.add_argument('--metric', type=metric, default="cosine")
     parser.add_argument('--file', type=str, default="imdb_0")
-    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--seed', type=int, default=42) #change to default=-1 later
     args = parser.parse_args()
     return args
 

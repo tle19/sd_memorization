@@ -3,6 +3,7 @@ import argparse
 import pandas as pd
 from image_generation import ImageGeneration
 from caption_generation import CaptionGeneration
+from cogvlm import CaptionGeneration2
 from preprocessing import preprocessing, save_csv
     
 def parse_args():
@@ -60,11 +61,13 @@ print('Images to generate:', len(prompts))
 # Load SD & BLIP Models
 seed = -1 if seed is None else seed
 sd_model = ImageGeneration(args.sd_model, seed, cuda)
-blip_model = CaptionGeneration(args.blip_model, seed, cuda)
+# blip_model = CaptionGeneration(args.blip_model, seed, cuda)
+cogvlm_model = CaptionGeneration2(args.blip_model, seed, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1, num_steps)
 
-generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
+# generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
+generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
 
 sd_model.generate_images(prompts, generated_prompts, image_path2, num_steps)
