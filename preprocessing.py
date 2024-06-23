@@ -11,7 +11,7 @@ def preprocessing(dataset, num_ppl, seed):
 
     print('Processing Data...')
     if '.tsv' in csv_path:    
-        csv_file = pd.read_table(csv_path, sep='\t')
+        csv_file = pd.read_csv(csv_path, sep='\t')
     else:
         csv_file = pd.read_csv(csv_path)
 
@@ -21,6 +21,7 @@ def preprocessing(dataset, num_ppl, seed):
     df = df.rename(columns={original_name: 'Name'})
     df = df[df['Name'].apply(is_english)]
     df = df[['Name']]
+    df = df.drop_duplicates(subset='Name', keep='first')
     size = df.shape[0]
     
     if num_ppl > size:
