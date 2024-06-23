@@ -38,7 +38,7 @@ def is_english(s):
     return isinstance(s, str) and s.isascii()
 
 def is_name(text):
-    name_pattern = r'^([A-Z][a-z]*\.?\s?)+[A-Z][a-z]*$'
+    name_pattern = r'^([A-Z][a-z]*\.?\s?|[A-Z]\.)+[A-Z][a-z]*$'
     return bool(re.match(name_pattern, text))
 
 def find_file(dataset_path):
