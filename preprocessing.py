@@ -1,8 +1,6 @@
 import os
 import pandas as pd
-import spacy
-
-nlp = spacy.load('en_core_web_sm')
+import re
 
 def save_csv(df, output_path):
     output_path = os.path.join(output_path, 'prompts.csv')
@@ -22,11 +20,11 @@ def preprocessing(dataset, num_ppl, seed):
     original_name = column_name(dataset)
     
     df = df.rename(columns={original_name: 'Name'})
+    df = df[['Name']]
+    df = df.dropna()
+    df = df.drop_duplicates(subset='Name', keep='first')
     df = df[df['Name'].apply(is_english)]
     df = df[df['Name'].apply(is_name)]
-    df = df[['Name']]
-    df = df.drop_duplicates(subset='Name', keep='first')
-    df = df.dropna()
     size = df.shape[0]
     
     if num_ppl > size:
@@ -40,11 +38,8 @@ def is_english(s):
     return isinstance(s, str) and s.isascii()
 
 def is_name(text):
-    processed_text = nlp(text)
-    for token in processed_text:
-        if token.ent_type_ == 'PERSON':
-            return True
-    return False
+    name_pattern = r'^([A-Z][a-z]*\.?\s?)+[A-Z][a-z]*$'
+    return bool(re.match(name_pattern, text))
 
 def find_file(dataset_path):
     files = os.listdir(dataset_path)
