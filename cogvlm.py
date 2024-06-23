@@ -10,7 +10,7 @@ from utils import print_title
 class CaptionGeneration2():
 
     def __init__(self, model_id, seed, cuda):
-        set_seed(seed)
+        set_seed(seed) 
         self.device = cuda if torch.cuda.is_available() else "cpu"
         self.tokenizer = LlamaTokenizer.from_pretrained('lmsys/vicuna-7b-v1.5')
         self.model = AutoModelForCausalLM.from_pretrained('THUDM/cogvlm-chat-hf', torch_dtype=torch.bfloat16, low_cpu_mem_usage=True, trust_remote_code=True)
@@ -39,7 +39,7 @@ class CaptionGeneration2():
                 is_human.append(False)
 
             generated_captions.append(text)
-            
+
             print_title('PROMPT', prompt, index)
             print(text)
 
@@ -55,10 +55,10 @@ class CaptionGeneration2():
         inputs = self.model.build_conversation_input_ids(self.tokenizer, query=prompt, history=[], images=[image])  # chat mode
         
         inputs = {
-            'input_ids': inputs['input_ids'].unsqueeze(0).to('cuda'),
-            'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to('cuda'),
-            'attention_mask': inputs['attention_mask'].unsqueeze(0).to('cuda'),
-            'images': [[inputs['images'][0].to('cuda').to(torch.bfloat16)]],
+            'input_ids': inputs['input_ids'].unsqueeze(0).to(self.device),
+            'token_type_ids': inputs['token_type_ids'].unsqueeze(0).to(self.device),
+            'attention_mask': inputs['attention_mask'].unsqueeze(0).to(self.device),
+            'images': [[inputs['images'][0].to(self.device).to(torch.bfloat16)]],
         }
         gen_kwargs = {"max_length": 2048, "do_sample": False}
 
