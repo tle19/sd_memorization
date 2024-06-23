@@ -18,7 +18,10 @@ def preprocessing(dataset, num_ppl, seed):
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
 
+    regex_pattern = r'\([^()]+\)'
+
     df = df.rename(columns={original_name: 'Name'})
+    df = df[~df['Name'].str.contains(regex_pattern, regex=True)]
     df = df[df['Name'].apply(is_english)]
     df = df[['Name']]
     df = df.drop_duplicates(subset='Name', keep='first')
