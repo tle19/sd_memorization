@@ -7,7 +7,7 @@ from transformers import AutoModelForCausalLM, LlamaTokenizer
 from utils import print_title
 
 # chat example
-class CaptionGeneration2():
+class CaptionGeneration2:
 
     def __init__(self, model_id, seed, cuda):
         set_seed(seed) 

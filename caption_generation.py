@@ -8,7 +8,7 @@ from transformers import set_seed
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from utils import print_title, punc_splice
 
-class CaptionGeneration():
+class CaptionGeneration:
     
     def __init__(self, model_id, seed, cuda):
         set_seed(seed)
