@@ -59,7 +59,7 @@ prompts_df.to_csv(csv_path, index=False)
 # additional metrics
 distances = [dist for dist in distances if dist != -1]
 
-print('   \033[1m' + 'Cosine' + '\033[0m')
+print('   \033[1m' + 'Cosine Similarity' + '\033[0m')
 print('  Avg:', np.mean(distances))
 print('  Max:', np.max(distances))
 print('  Min:', np.min(distances))
