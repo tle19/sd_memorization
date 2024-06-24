@@ -1,46 +1,32 @@
 import os
 import argparse
-import torch
 import pandas as pd
 import numpy as np
-from transformers import set_seed
-from transformers import CLIPModel, CLIPProcessor
-from PIL import Image
+from sklearn.metrics.pairwise import cosine_similarity
 from utils import *
 
-def metric(func):
-    metric_functions = {
-        "euclidean": euclidean_distance,
-        "manhattan": manhattan_distance,
-        "cosine": cosine_similarity,
-        "fid": fid_score,
-        "is": inception_score
-    }
-    
-    if func in metric_functions:
-        return metric_functions[func]
-    else:
-        raise argparse.ArgumentTypeError("Invalid metric provided")
-    
 def parse_args():
     parser = argparse.ArgumentParser(description="Memorization Metrics")
-    parser.add_argument('--model_id', type=str, default="openai/clip-vit-base-patch32")
-    parser.add_argument('--metric', type=metric, default="cosine")
+    parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--file', type=str, default="imdb_0")
+    parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=-1 later
     args = parser.parse_args()
     return args
 
 args = parse_args()
-model_id = args.model_id
-eval_metric = args.metric
+model_type = args.model
 file = args.file
+cuda = args.cuda
+seed = args.seed
 dataset = punc_splice('_', file)
 
-set_seed(args.seed)
-
-model = CLIPModel.from_pretrained(model_id)
-processor = CLIPProcessor.from_pretrained(model_id)
+if model_type == 'clip':
+    model = CLIPEmbed(seed, cuda)
+elif model_type == 'dino':
+    model = DINOEmbed(seed, cuda)
+else:
+    raise TypeError('Embedding type not found')
 
 output_path = os.path.join('output', dataset, file)
 csv_path = os.path.join(output_path, 'prompts.csv')
@@ -49,22 +35,16 @@ generated_prompts = prompts_df['Name'].tolist()
 
 distances = []
 
-def image_feature(z):
-    image = Image.open(z)
-    inputs = processor(images=image, return_tensors="pt")
-
-    with torch.no_grad():
-        image_feature = model.get_image_features(**inputs).numpy()
-
-    return image_feature
-
 for index, prompt in enumerate(generated_prompts):
 
     if prompts_df['is_human'][index]:
         x = os.path.join(output_path, 'images1', prompt + '.png')
         y = os.path.join(output_path, 'images2', prompt + '.png')
 
-        dist = eval_metric(image_feature(x), image_feature(y))
+        features_x = model.image_feature(x)
+        features_y = model.image_feature(y)
+
+        dist = cosine_similarity(features_x, features_y)[0, 0]
     else:
         dist = -1
 

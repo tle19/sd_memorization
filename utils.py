@@ -1,21 +1,45 @@
-import numpy as np
+import torch
+from PIL import Image
+from transformers import set_seed
+from transformers import CLIPModel, CLIPProcessor
+from transformers import ViTImageProcessor, ViTModel
 
-def euclidean_distance(x, y):
-    return np.linalg.norm(x - y)
+class CLIPEmbed:
 
-def manhattan_distance(x, y):
-    return np.sum(np.abs(x - y))
+    def __init__(self, seed, cuda):
+        set_seed(seed)
+        self.device = cuda if torch.cuda.is_available() else "cpu"
+        self.model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+    
+    def image_feature(self, input):
+        image = Image.open(input)
+        image = image.convert("RGB").resize((224, 224))
+        inputs = self.processor(images=image, return_tensors="pt")
 
-def cosine_similarity(x, y):
-    return (np.dot(x, y.T) / (np.linalg.norm(x) * np.linalg.norm(y)))[0][0]
+        with torch.no_grad():
+            image_feature = self.model.get_image_features(**inputs).numpy()
 
-def fid_score(x, y):
-    pass
-    #implement FID
+        return image_feature
+    
 
-def inception_score(x, y):
-    pass
-    #implement IS
+class DINOEmbed:
+
+    def __init__(self, seed, cuda):
+        set_seed(seed)
+        self.device = cuda if torch.cuda.is_available() else "cpu"
+        self.model = ViTModel.from_pretrained("facebook/dino-vitb16")
+        self.processor = ViTImageProcessor.from_pretrained("facebook/dino-vitb16")
+    
+    def image_feature(self, input):
+        image = Image.open(input)
+        image = image.convert("RGB").resize((384, 384))
+        inputs = self.processor(images=image, return_tensors="pt")
+
+        with torch.no_grad():
+            image_feature = self.model(**inputs).last_hidden_state.squeeze(0).numpy()
+        
+        return image_feature
 
 def print_title(typ, name, index):
     counter = '{:0{width}d}'.format(index, width=8)
