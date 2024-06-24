@@ -77,7 +77,7 @@ class CaptionGeneration:
 
             hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
             ethnicity = answers[2]
-            age = f'{answers[3]} year old'
+            age = f'{answers[3]} year old' #every_3
             # age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
             
             text = self.add_attribute(text, hair_and_eyes, True)
@@ -100,11 +100,12 @@ class CaptionGeneration:
     
     def generate_one_caption(self, image, prompt, temp=1.0, top_k=50, top_p=1.0, min=0, max=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
+
         generated_ids = self.model.generate(**inputs, temperature=temp, top_k=top_k, top_p=top_p, min_length=min, max_length=max, do_sample=True)
-            #experiment with temperature, top_k, top_p
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         text = text.lower().replace('.', ',')
+        
         return text
     
     def filter_vague(self, answer, question):

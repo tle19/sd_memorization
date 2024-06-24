@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 from image_generation import ImageGeneration
 from caption_generation import CaptionGeneration
-from cogvlm import CaptionGeneration2
+# from cogvlm import CaptionGeneration2
 from preprocessing import preprocessing, save_csv
     
 def parse_args():

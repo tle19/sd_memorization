@@ -20,8 +20,7 @@ class CLIPEmbed:
         with torch.no_grad():
             image_feature = self.model.get_image_features(**inputs).numpy()
 
-        return image_feature
-    
+        return image_feature 
 
 class DINOEmbed:
 
@@ -40,6 +39,7 @@ class DINOEmbed:
             image_feature = self.model(**inputs).last_hidden_state.squeeze(0).numpy()
         
         return image_feature
+
 
 def print_title(typ, name, index):
     counter = '{:0{width}d}'.format(index, width=8)
