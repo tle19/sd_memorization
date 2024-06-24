@@ -17,7 +17,7 @@ class ImageGeneration:
             print_title('IMAGE', names[index], index)
 
             with torch.no_grad():
-                image = self.pipe(prompt, num_inference_steps=num_steps).images[0]
+                image = self.pipe(prompt, num_inference_steps=num_steps, width=1024, height=1024).images[0]
 
             image_path = os.path.join(sd_folder_path1, names[index] + '.png')
             image.save(image_path)
