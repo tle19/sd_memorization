@@ -54,8 +54,8 @@ def find_file(dataset_path):
 def column_name(dataset):
     datasets = {
         'imdb': 'primaryName',
-        'voxceleb': 'speakers',
         'everypolitician': 'name',
+        'voxceleb': 'speakers',
         'musicbrainz': 'artist_mb'
     }
     if dataset in datasets:

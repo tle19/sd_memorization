@@ -13,8 +13,8 @@ def metric(func):
         "euclidean": euclidean_distance,
         "manhattan": manhattan_distance,
         "cosine": cosine_similarity,
-        "fid": fid_distance,
-        "is": is_distance
+        "fid": fid_score,
+        "is": inception_score
     }
     
     if func in metric_functions:

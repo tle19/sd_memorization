@@ -26,7 +26,8 @@ class CaptionGeneration:
         }
 
         self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her', 'lady',
+            'man', 'men', 'woman', 'women', 'boy', 'girl', 'gentleman', 'lady', 
+            'he', 'she', 'his', 'her', 'him', 'hers', 
             'child', 'children', 'adult', 'adults', 'baby', 'babies',
             'person', 'people', 'actor', 'actress', 'lady', 'players'
         ]

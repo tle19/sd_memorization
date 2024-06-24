@@ -9,11 +9,11 @@ def manhattan_distance(x, y):
 def cosine_similarity(x, y):
     return (np.dot(x, y.T) / (np.linalg.norm(x) * np.linalg.norm(y)))[0][0]
 
-def fid_distance(x, y):
+def fid_score(x, y):
     pass
     #implement FID
 
-def is_distance(x, y):
+def inception_score(x, y):
     pass
     #implement IS
 
