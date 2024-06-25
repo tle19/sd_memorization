@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument('--top_k', type=int, default=50)
     parser.add_argument('--top_p', type=float, default=1.0)
     parser.add_argument('--num_steps', type=int, default=50)
+    parser.add_argument('--num_beams', type=int, default=1)
     parser.add_argument('--prompt', type=str, default='')
     parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
@@ -73,7 +74,7 @@ blip_model = CaptionGeneration(args.blip_model, cuda)
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1, num_steps)
 
-generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
+generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p, args.num_beams)
 # generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
 
 sd_model.generate_images(prompts, generated_prompts, image_path2, num_steps)

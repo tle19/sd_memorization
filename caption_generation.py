@@ -42,7 +42,7 @@ class CaptionGeneration:
             'eleven', 'twelve', 'teen'
         ]
         
-    def generate_captions(self, prompts, path, output_path, temp, k, p):
+    def generate_captions(self, prompts, path, output_path, temp, k, p, beams):
         generated_captions = []
         is_human = []
 
@@ -51,7 +51,7 @@ class CaptionGeneration:
             image = Image.open(image_path)
 
             pre_prompt = "this is a picture of"
-            text = self.generate_one_caption(image, pre_prompt, temp=temp, top_k=k, top_p=p, min=30, max=40)
+            text = self.generate_one_caption(image, pre_prompt, temp, k, p, beams, 30, 40)
 
             if any(word in self.human_nouns for word in text.split()):
                 is_human.append(True)
@@ -92,10 +92,10 @@ class CaptionGeneration:
 
         return generated_captions
     
-    def generate_one_caption(self, image, prompt, temp=1.0, top_k=50, top_p=1.0, min=0, max=20):
+    def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min=0, max=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
 
-        generated_ids = self.model.generate(**inputs, temperature=temp, top_k=top_k, top_p=top_p, min_length=min, max_length=max, do_sample=True)
+        generated_ids = self.model.generate(**inputs, temperature=temp, top_k=top_k, top_p=top_p, num_beams=num_beams, min_length=min, max_length=max, do_sample=True)
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         text = text.lower().replace('.', ',')
