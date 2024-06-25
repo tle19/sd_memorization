@@ -70,8 +70,7 @@ is_std = fid_scores['inception_score_std']
 fid_score = fid_scores['frechet_inception_distance']
 
 prompts_df['Cosine'] = cosine_scores
-prompts_df['IS Mean'] = is_mean
-prompts_df['IS STD'] = is_std
+prompts_df['IS'] = is_mean
 prompts_df['FID'] = fid_score
 
 prompts_df.to_csv(csv_path, index=False)

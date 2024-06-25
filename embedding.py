@@ -16,12 +16,6 @@ class Embed:
         with torch.no_grad():
             image_feature = self.compute_image_feature(inputs)
         return image_feature
-
-    def process_image(self, image):
-        raise NotImplementedError("Not implemented!")
-
-    def compute_image_feature(self, inputs):
-        raise NotImplementedError("Not implemented!")
     
 class CLIPEmbed(Embed):
     def __init__(self, cuda):
