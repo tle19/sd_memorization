@@ -60,7 +60,7 @@ class CaptionGeneration:
             
             answers = []
             for question in self.blip_questions:
-                answer = self.generate_one_caption(image, question, max=25).lower()
+                answer = self.generate_one_caption(image, question, temp, k, p, beams, max=25).lower()
                 answer = self.filter_vague(answer, question)
 
                 if 'age' in question:
