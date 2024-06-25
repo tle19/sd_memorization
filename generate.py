@@ -1,6 +1,7 @@
 import os
 import argparse
 import pandas as pd
+from transformers import set_seed
 from image_generation import ImageGeneration
 from caption_generation import CaptionGeneration
 # from cogvlm import CaptionGeneration2
@@ -28,6 +29,12 @@ num_steps = args.num_steps
 one_prompt = args.prompt
 cuda = args.cuda
 seed = args.seed
+
+if seed:
+    set_seed(seed)
+    print(f"Seed {seed} set")
+else:
+    print("No seed set")
 
 # Dataset Preprocessing
 if one_prompt == '':
@@ -59,10 +66,9 @@ print(f'Initialized {dataset}_{count} directory')
 print('Images to generate:', len(prompts))
 
 # Load SD & BLIP Models
-seed = -1 if seed is None else seed
-sd_model = ImageGeneration(args.sd_model, seed, cuda)
-blip_model = CaptionGeneration(args.blip_model, seed, cuda)
-# cogvlm_model = CaptionGeneration2(args.blip_model, seed, cuda)
+sd_model = ImageGeneration(args.sd_model, cuda)
+blip_model = CaptionGeneration(args.blip_model, cuda)
+# cogvlm_model = CaptionGeneration2(args.blip_model, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(prompts, prompts, image_path1, num_steps)

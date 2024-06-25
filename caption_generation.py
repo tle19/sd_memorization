@@ -4,14 +4,12 @@ import pandas as pd
 import spacy
 import re
 from PIL import Image
-from transformers import set_seed
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from utils import print_title, punc_splice
 
 class CaptionGeneration:
     
-    def __init__(self, model_id, seed, cuda):
-        set_seed(seed)
+    def __init__(self, model_id, cuda):
         self.device = cuda if torch.cuda.is_available() else "cpu"
         self.model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16)
         self.processor = Blip2Processor.from_pretrained(model_id, torch_dtype=torch.float16)
@@ -101,7 +99,7 @@ class CaptionGeneration:
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         text = text.lower().replace('.', ',')
-        
+
         return text
     
     def filter_vague(self, answer, question):

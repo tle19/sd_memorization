@@ -1,13 +1,11 @@
 import os
 import torch
-from transformers import set_seed
 from diffusers import StableDiffusionPipeline
 from utils import print_title
 
 class ImageGeneration:
 
-    def __init__(self, model_id, seed, cuda):
-        set_seed(seed)
+    def __init__(self, model_id, cuda):
         self.device = cuda if torch.cuda.is_available() else "cpu"
         self.pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, safety_checker = None, requires_safety_checker = False)   
         self.pipe = self.pipe.to(self.device)

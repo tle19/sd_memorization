@@ -2,15 +2,13 @@ import os
 import torch
 import pandas as pd
 from PIL import Image
-from transformers import set_seed
 from transformers import AutoModelForCausalLM, LlamaTokenizer
 from utils import print_title
 
 # chat example
 class CaptionGeneration2:
 
-    def __init__(self, model_id, seed, cuda):
-        set_seed(seed) 
+    def __init__(self, model_id, cuda):
         self.device = cuda if torch.cuda.is_available() else "cpu"
         self.tokenizer = LlamaTokenizer.from_pretrained('lmsys/vicuna-7b-v1.5')
         self.model = AutoModelForCausalLM.from_pretrained('THUDM/cogvlm-chat-hf', torch_dtype=torch.bfloat16, low_cpu_mem_usage=True, trust_remote_code=True)

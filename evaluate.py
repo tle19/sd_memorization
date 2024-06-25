@@ -2,7 +2,9 @@ import os
 import argparse
 import pandas as pd
 import numpy as np
+from transformers import set_seed
 from sklearn.metrics.pairwise import cosine_similarity
+from embedding import CLIPEmbed, DINOEmbed
 from utils import *
 
 def parse_args():
@@ -10,7 +12,7 @@ def parse_args():
     parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--file', type=str, default="imdb_0")
     parser.add_argument('--cuda', type=str, default='cuda')
-    parser.add_argument('--seed', type=int, default=42) #change to default=-1 later
+    parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args
 
@@ -21,45 +23,63 @@ cuda = args.cuda
 seed = args.seed
 dataset = punc_splice('_', file)
 
+if seed:
+    set_seed(seed)
+    print(f"Seed {seed} set")
+else:
+    print("No seed set")
+
 if model_type == 'clip':
-    model = CLIPEmbed(seed, cuda)
+    model = CLIPEmbed(cuda)
 elif model_type == 'dino':
-    model = DINOEmbed(seed, cuda)
+    model = DINOEmbed(cuda)
 else:
     raise TypeError('Embedding type not found')
 
 output_path = os.path.join('output', dataset, file)
 csv_path = os.path.join(output_path, 'prompts.csv')
+images1 = os.path.join(output_path, 'images1')
+images2 = os.path.join(output_path, 'images2')
+
 prompts_df = pd.read_csv(csv_path)
-generated_prompts = prompts_df['Name'].tolist()
+names = prompts_df['Name'].tolist()
 
-distances = []
+fid_scores = calculate_fid(images1, images2)
+cosine_scores = []
 
-for index, prompt in enumerate(generated_prompts):
+for index, name in enumerate(names):
 
     if prompts_df['is_human'][index]:
-        x = os.path.join(output_path, 'images1', prompt + '.png')
-        y = os.path.join(output_path, 'images2', prompt + '.png')
+        x = os.path.join(images1, name + '.png')
+        y = os.path.join(images2, name + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)
 
-        dist = cosine_similarity(features_x, features_y)[0, 0]
+        cos_score = cosine_similarity(features_x, features_y)[0, 0]
     else:
-        dist = -1
+        cos_score = -1
 
-    distances.append(dist)
+    cosine_scores.append(cos_score)
 
-    print_title('IMAGE', prompt, index)
-    print(dist)
+    print_title('IMAGE', name, index)
+    print(cos_score)
 
-prompts_df['Metric'] = distances
+is_mean = fid_scores['inception_score_mean']
+is_std = fid_scores['inception_score_std']
+fid_score = fid_scores['frechet_inception_distance']
+
+prompts_df['Cosine'] = cosine_scores
+prompts_df['IS Mean'] = is_mean
+prompts_df['IS STD'] = is_std
+prompts_df['FID'] = fid_score
+
 prompts_df.to_csv(csv_path, index=False)
 
-# additional metrics
-distances = [dist for dist in distances if dist != -1]
+# printed metrics
+distances = [dist for dist in cosine_scores if dist != -1]
 
-print('   \033[1m' + 'Cosine Similarity' + '\033[0m')
-print('  Avg:', np.mean(distances))
-print('  Max:', np.max(distances))
-print('  Min:', np.min(distances))
+print('\n\033[1mMetrics\033[0m')
+print(f'Cosine Score: {np.mean(distances)}')
+print(f'IS Score: {is_mean} \u00B1 {is_std}')
+print(f'FID Score: {fid_score}')
