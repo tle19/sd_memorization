@@ -77,7 +77,7 @@ generated_prompts = blip_model.generate_captions(names, base_images, output_path
 # generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
 
 for i in range(args.output):
-    print(f'\n\033[1mBATCH {i}:\033[0m')
+    print(f'\n\033[1m  BATCH {i}:\033[0m')
     generated_images = os.path.join(output_path, f'generated_images_{i}')
     os.makedirs(generated_images)
     sd_model.generate_images(names, generated_prompts, generated_images)

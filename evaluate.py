@@ -57,10 +57,10 @@ for i in range(num_iters):
     fid_batch_score = fid_and_isc['frechet_inception_distance']
     cos_batch_scores = []
 
-    print(f'\n\033[1mBATCH {i}:\033[0m')
+    print(f'\n\033[1m  BATCH {i}:\033[0m')
 
     for index, name in enumerate(names):
-        
+        print_title('IMAGE', name, index)
         if prompts_df['is_human'][index]:
             
             x = os.path.join(base_images, name + '.png')
@@ -74,9 +74,6 @@ for i in range(num_iters):
         else:
             cos_batch_scores.append(-1)
         
-        print_title('IMAGE', name, index)
-        print(score)
-
     cosine_scores.append(cos_batch_scores)
     fid_scores.append(fid_batch_score)
     isc_scores.append(isc_batch_score)
@@ -88,8 +85,9 @@ prompts_df['IS'] = np.mean(isc_scores)
 prompts_df.to_csv(csv_path, index=False)
 
 # printed metrics
-distances = [dist for dist in cosine_scores if dist != -1]
+distances = prompts_df['Cosine'][prompts_df['is_human']]
 
+print
 print('\n\033[1mMetrics\033[0m')
 print(f'Cosine Score: {np.mean(distances)}')
 print(f'FID Score: {np.mean(fid_scores)}')

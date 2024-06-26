@@ -32,7 +32,7 @@ def calculate_fid(base_images_path, generated_images_path):
 def bar_graph(file, metric):
     df = pd.read_csv(file)
 
-    scores = df[metric][df[metric] != -1]
+    scores = df['Cosine'][df['is_human']]
     column_name = scores.name
 
     plt.bar(scores, bins=20, color='blue', width=0.4)
