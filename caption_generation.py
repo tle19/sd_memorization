@@ -73,8 +73,8 @@ class CaptionGeneration:
 
                 answers.append(answer)
 
-            hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-            age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
+            hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes)'
+            age_and_ethnicity = f'({answers[3]} year old {answers[2]}'
             
             text = self.add_attribute(text, hair_and_eyes, True)
             text = self.add_attribute(text, age_and_ethnicity)
