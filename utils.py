@@ -1,5 +1,5 @@
 import pandas as pd
-import torch_fidelity
+from torch_fidelity import calculate_metrics
 import matplotlib.pyplot as plt
 
 def print_title(typ, name, index):
@@ -13,17 +13,17 @@ def punc_splice(punc, text):
     else:
         return text
 
-def calculate_fid(image1, image2):
-    fid_score = torch_fidelity.calculate_metrics(
-        input1=image1,
-        input2=image2,
+def calculate_fid(base_images_path, generated_images_path):
+    fid_score = calculate_metrics(
+        input1=base_images_path,
+        input2=generated_images_path,
         cuda=True,
         isc=True,
         fid=True,
         verbose=False
     )
     return fid_score
-   
+
 def bar_graph(file, metric):
     df = pd.read_csv(file)
 

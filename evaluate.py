@@ -38,20 +38,20 @@ else:
 
 output_path = os.path.join('output', dataset, file)
 csv_path = os.path.join(output_path, 'prompts.csv')
-images1 = os.path.join(output_path, 'images1')
-images2 = os.path.join(output_path, 'images2')
+base_images = os.path.join(output_path, 'images1')
+generated_images = os.path.join(output_path, 'images2')
 
 prompts_df = pd.read_csv(csv_path)
 names = prompts_df['Name'].tolist()
 
-fid_scores = calculate_fid(images1, images2)
+fid_scores = calculate_fid(base_images, generated_images)
 cosine_scores = []
 
 for index, name in enumerate(names):
 
     if prompts_df['is_human'][index]:
-        x = os.path.join(images1, name + '.png')
-        y = os.path.join(images2, name + '.png')
+        x = os.path.join(base_images, name + '.png')
+        y = os.path.join(generated_images, name + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)
@@ -71,7 +71,7 @@ fid_score = fid_scores['frechet_inception_distance']
 
 prompts_df['Cosine'] = cosine_scores
 prompts_df['IS'] = is_mean
-prompts_df['FID'] = fid_score
+prompts_df['FID'] = fid_scores
 
 prompts_df.to_csv(csv_path, index=False)
 
@@ -79,6 +79,6 @@ prompts_df.to_csv(csv_path, index=False)
 distances = [dist for dist in cosine_scores if dist != -1]
 
 print('\n\033[1mMetrics\033[0m')
-print(f'Cosine Score: {np.mean(distances)}')
+print(f'Cosine Score: {np.mean(distances)}  \u00B1 {np.std(distances)}')
 print(f'IS Score: {is_mean} \u00B1 {is_std}')
 print(f'FID Score: {fid_score}')

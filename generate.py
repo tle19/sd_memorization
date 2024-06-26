@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument('--num_ppl', type=int, default=99999999)
     parser.add_argument('--temp', type=float, default=1.0)
     parser.add_argument('--top_k', type=int, default=50)
-    parser.add_argument('--top_p', type=float, default=1.0)
+    parser.add_argument('--top_p', type=float, default=0.7)
     parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--num_beams', type=int, default=1)
     parser.add_argument('--prompt', type=str, default='')
@@ -54,11 +54,11 @@ while os.path.exists(output_path):
 
 os.makedirs(output_path)
 
-image_path1 = os.path.join(output_path, 'images1')
-image_path2 = os.path.join(output_path, 'images2')
+base_images = os.path.join(output_path, 'base_images')
+generated_images = os.path.join(output_path, 'generated_images')
 
-os.makedirs(image_path1)
-os.makedirs(image_path2)
+os.makedirs(base_images)
+os.makedirs(generated_images)
 
 save_csv(df, output_path)
 prompts = df['Name'].tolist()
@@ -72,9 +72,9 @@ blip_model = CaptionGeneration(args.blip_model, cuda)
 # cogvlm_model = CaptionGeneration2(args.blip_model, cuda)
 
 # Image and Prompt Generation
-sd_model.generate_images(prompts, prompts, image_path1, num_steps)
+sd_model.generate_images(prompts, prompts, base_images, num_steps)
 
-generated_prompts = blip_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p, args.num_beams)
+generated_prompts = blip_model.generate_captions(prompts, base_images, output_path, args.temp, args.top_k, args.top_p, args.num_beams)
 # generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
 
-sd_model.generate_images(prompts, generated_prompts, image_path2, num_steps)
+sd_model.generate_images(prompts, generated_prompts, generated_images, num_steps)
