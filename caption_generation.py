@@ -25,9 +25,9 @@ class CaptionGeneration:
 
         self.human_nouns = [
             'man', 'men', 'woman', 'women', 'boy', 'girl', 'gentleman', 'lady', 
-            'he', 'she', 'his', 'her', 'him', 'hers', 
             'child', 'children', 'adult', 'adults', 'baby', 'babies',
-            'person', 'people', 'actor', 'actress', 'lady', 'players'
+            'person', 'people', 'actor', 'actress', 'lady', 'players',
+            'singer', 'singers'
         ]
 
         self.bad_answers = [
@@ -78,6 +78,7 @@ class CaptionGeneration:
             
             text = self.add_attribute(text, hair_and_eyes, True)
             text = self.add_attribute(text, age_and_ethnicity)
+            re.sub(r'\s+',' ',text)
 
             generated_captions.append(text)
 

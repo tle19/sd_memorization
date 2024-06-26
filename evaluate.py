@@ -38,40 +38,52 @@ else:
 
 output_path = os.path.join('output', dataset, file)
 csv_path = os.path.join(output_path, 'prompts.csv')
-base_images = os.path.join(output_path, 'images1')
-generated_images = os.path.join(output_path, 'images2')
+base_images = os.path.join(output_path, 'base_images')
+
+num_iters = folder_size(output_path)
 
 prompts_df = pd.read_csv(csv_path)
 names = prompts_df['Name'].tolist()
 
-fid_scores = calculate_fid(base_images, generated_images)
 cosine_scores = []
+fid_scores = []
+isc_scores = []
 
-for index, name in enumerate(names):
+for i in range(num_iters):
+    generated_images = os.path.join(output_path, f'generated_images_{i}')
 
-    if prompts_df['is_human'][index]:
-        x = os.path.join(base_images, name + '.png')
-        y = os.path.join(generated_images, name + '.png')
+    fid_and_isc = calculate_fid(base_images, generated_images)
+    isc_batch_score = fid_and_isc['inception_score_mean']
+    fid_batch_score = fid_and_isc['frechet_inception_distance']
+    cos_batch_scores = []
 
-        features_x = model.image_feature(x)
-        features_y = model.image_feature(y)
+    print(f'\n\033[1mBATCH {i}:\033[0m')
 
-        cos_score = cosine_similarity(features_x, features_y)[0, 0]
-    else:
-        cos_score = -1
+    for index, name in enumerate(names):
+        
+        if prompts_df['is_human'][index]:
+            
+            x = os.path.join(base_images, name + '.png')
+            y = os.path.join(generated_images, name + '.png')
 
-    cosine_scores.append(cos_score)
+            features_x = model.image_feature(x)
+            features_y = model.image_feature(y)
+            
+            score = cosine_similarity(features_x, features_y)[0, 0]
+            cos_batch_scores.append(score)
+        else:
+            cos_batch_scores.append(-1)
+        
+        print_title('IMAGE', name, index)
+        print(score)
 
-    print_title('IMAGE', name, index)
-    print(cos_score)
+    cosine_scores.append(cos_batch_scores)
+    fid_scores.append(fid_batch_score)
+    isc_scores.append(isc_batch_score)
 
-is_mean = fid_scores['inception_score_mean']
-is_std = fid_scores['inception_score_std']
-fid_score = fid_scores['frechet_inception_distance']
-
-prompts_df['Cosine'] = cosine_scores
-prompts_df['IS'] = is_mean
-prompts_df['FID'] = fid_scores
+prompts_df['Cosine'] = np.mean(cosine_scores, axis=0)
+prompts_df['FID'] = np.mean(fid_scores)
+prompts_df['IS'] = np.mean(isc_scores)
 
 prompts_df.to_csv(csv_path, index=False)
 
@@ -79,6 +91,6 @@ prompts_df.to_csv(csv_path, index=False)
 distances = [dist for dist in cosine_scores if dist != -1]
 
 print('\n\033[1mMetrics\033[0m')
-print(f'Cosine Score: {np.mean(distances)}  \u00B1 {np.std(distances)}')
-print(f'IS Score: {is_mean} \u00B1 {is_std}')
-print(f'FID Score: {fid_score}')
+print(f'Cosine Score: {np.mean(distances)}')
+print(f'FID Score: {np.mean(fid_scores)}')
+print(f'IS Score: {np.mean(isc_scores)}')

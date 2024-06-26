@@ -1,10 +1,11 @@
+import os
 import pandas as pd
 from torch_fidelity import calculate_metrics
 import matplotlib.pyplot as plt
 
 def print_title(typ, name, index):
     counter = '{:0{width}d}'.format(index, width=8)
-    print('\033[1m' + typ, counter, '-', name + '\033[0m')
+    print(f'\033[1m{typ}{counter}-{name}\033[0m')
 
 def punc_splice(punc, text):
     pos = text.find(punc)
@@ -12,6 +13,10 @@ def punc_splice(punc, text):
         return text[:pos]
     else:
         return text
+
+def folder_size(path):
+    files = os.listdir(path)
+    return len(files) - 2
 
 def calculate_fid(base_images_path, generated_images_path):
     fid_score = calculate_metrics(

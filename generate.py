@@ -12,7 +12,8 @@ def parse_args():
     parser.add_argument('--sd_model', type=str, default="runwayml/stable-diffusion-v1-5")
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
-    parser.add_argument('--num_ppl', type=int, default=99999999)
+    parser.add_argument('--input', type=int, default=99999999)
+    parser.add_argument('--output', type=int, default=1)
     parser.add_argument('--temp', type=float, default=1.0)
     parser.add_argument('--top_k', type=int, default=50)
     parser.add_argument('--top_p', type=float, default=0.7)
@@ -39,7 +40,7 @@ else:
 
 # Dataset Preprocessing
 if one_prompt == '':
-    df = preprocessing(dataset, args.num_ppl, seed)
+    df = preprocessing(dataset, args.input, seed)
 else:
     dataset = 'prompts'
     df = pd.DataFrame([one_prompt], columns=['Name']) 
@@ -55,26 +56,28 @@ while os.path.exists(output_path):
 os.makedirs(output_path)
 
 base_images = os.path.join(output_path, 'base_images')
-generated_images = os.path.join(output_path, 'generated_images')
 
 os.makedirs(base_images)
-os.makedirs(generated_images)
 
 save_csv(df, output_path)
-prompts = df['Name'].tolist()
+names = df['Name'].tolist()
 
 print(f'Initialized {dataset}_{count} directory')
-print('Images to generate:', len(prompts))
+print('Images to generate:', len(names))
 
 # Load SD & BLIP Models
-sd_model = ImageGeneration(args.sd_model, cuda)
+sd_model = ImageGeneration(args.sd_model, num_steps, cuda)
 blip_model = CaptionGeneration(args.blip_model, cuda)
 # cogvlm_model = CaptionGeneration2(args.blip_model, cuda)
 
 # Image and Prompt Generation
-sd_model.generate_images(prompts, prompts, base_images, num_steps)
+sd_model.generate_images(names, names, base_images)
 
-generated_prompts = blip_model.generate_captions(prompts, base_images, output_path, args.temp, args.top_k, args.top_p, args.num_beams)
+generated_prompts = blip_model.generate_captions(names, base_images, output_path, args.temp, args.top_k, args.top_p, args.num_beams)
 # generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
 
-sd_model.generate_images(prompts, generated_prompts, generated_images, num_steps)
+for i in range(args.output):
+    print(f'\n\033[1mBATCH {i}:\033[0m')
+    generated_images = os.path.join(output_path, f'generated_images_{i}')
+    os.makedirs(generated_images)
+    sd_model.generate_images(names, generated_prompts, generated_images)
