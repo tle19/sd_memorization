@@ -87,7 +87,6 @@ prompts_df.to_csv(csv_path, index=False)
 # printed metrics
 distances = prompts_df['Cosine'][prompts_df['is_human']]
 
-print
 print('\n\033[1mMetrics\033[0m')
 print(f'Cosine Score: {np.mean(distances)}')
 print(f'FID Score: {np.mean(fid_scores)}')
