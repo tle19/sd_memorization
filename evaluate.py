@@ -25,9 +25,9 @@ dataset = punc_splice('_', file)
 
 if seed:
     set_seed(seed)
-    print(f"Seed {seed} set")
+    print(f"SEED {seed}")
 else:
-    print("No seed set")
+    print("NO SEED")
 
 if model_type == 'clip':
     model = CLIPEmbed(cuda)

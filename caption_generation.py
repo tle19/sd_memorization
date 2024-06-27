@@ -9,11 +9,16 @@ from utils import print_title, punc_splice
 
 class CaptionGeneration:
     
-    def __init__(self, model_id, cuda):
+    def __init__(self, model_id, temp, top_k, top_p, num_beams, cuda):
         self.device = cuda if torch.cuda.is_available() else "cpu"
         self.model = Blip2ForConditionalGeneration.from_pretrained(model_id, torch_dtype=torch.float16)
         self.processor = Blip2Processor.from_pretrained(model_id, torch_dtype=torch.float16)
         self.model.to(self.device)
+
+        self.temp = temp
+        self.top_k = top_k
+        self.top_p = top_p
+        self.num_beams = num_beams
         self.nlp = spacy.load('en_core_web_sm')
 
         self.blip_questions = {
@@ -42,7 +47,7 @@ class CaptionGeneration:
             'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
         ]
         
-    def generate_captions(self, prompts, path, output_path, temp, k, p, beams):
+    def generate_captions(self, prompts, path, output_path):
         generated_captions = []
         is_human = []
 
@@ -51,7 +56,16 @@ class CaptionGeneration:
             image = Image.open(image_path)
 
             pre_prompt = "this is a picture of"
-            text = self.generate_one_caption(image, pre_prompt, temp, k, p, beams, 30, 40)
+            text = self.generate_one_caption(
+                image, 
+                pre_prompt, 
+                self.temp, 
+                self.top_k, 
+                self.top_p, 
+                self.num_beams, 
+                min_length=30, 
+                max_length=40
+            )
 
             if any(word in self.human_nouns for word in text.split()):
                 is_human.append(True)
@@ -59,29 +73,7 @@ class CaptionGeneration:
                 is_human.append(False)
             
             if is_human[-1]:
-
-                answers = []
-                for question in self.blip_questions:
-                    answer = self.generate_one_caption(image, question, temp, k, p, beams, max=25).lower()
-                    answer = self.filter_vague(answer, question)
-
-                    if "ethnicity" in question:
-                        answer = self.extract_ethnicity(answer)
-                    elif 'age' in question:
-                        answer = self.extract_age(answer)
-                    else:
-                        answer = self.extract_adjective(answer)
-                        
-                    if not answer:
-                        answer = self.blip_questions[question]
-
-                    answers.append(answer)
-
-                hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-                age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
-                
-                text = self.add_attribute(text, hair_and_eyes, True)
-                text = self.add_attribute(text, age_and_ethnicity)
+                text = self.additional_attributes(image, text)
 
             generated_captions.append(text)
 
@@ -96,13 +88,57 @@ class CaptionGeneration:
 
         return generated_captions
     
-    def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min=0, max=20):
+    def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
 
-        generated_ids = self.model.generate(**inputs, temperature=temp, top_k=top_k, top_p=top_p, num_beams=num_beams, min_length=min, max_length=max, do_sample=True)
+        generated_ids = self.model.generate(
+            **inputs, 
+            temperature=temp, 
+            top_k=top_k, 
+            top_p=top_p, 
+            num_beams=num_beams, 
+            min_length=min_length, 
+            max_length=max_length, 
+            do_sample=True
+        )
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         text = text.lower().replace('.', ',')
+
+        return text
+    
+    def additional_attributes(self, image, text):
+        answers = []
+        for question in self.blip_questions:
+            answer = self.generate_one_caption(
+                image, 
+                question, 
+                self.temp, 
+                self.top_k, 
+                self.top_p, 
+                self.num_beams, 
+                max_length=25
+            )
+            
+            answer = self.filter_vague(answer, question)
+
+            if "ethnicity" in question:
+                answer = self.extract_ethnicity(answer)
+            elif 'age' in question:
+                answer = self.extract_age(answer)
+            else:
+                answer = self.extract_adjective(answer)
+                
+            if not answer:
+                answer = self.blip_questions[question]
+
+            answers.append(answer)
+
+        hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
+        age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
+        
+        text = self.add_attribute(text, hair_and_eyes, True)
+        text = self.add_attribute(text, age_and_ethnicity)
 
         return text
     
@@ -131,23 +167,20 @@ class CaptionGeneration:
                 return token.text
             
     def extract_age(self, text):
-        reg_pattern = r"\d+s*?"
+        digit_pattern = r"\d+s*?"
+        match = re.search(digit_pattern, text)
 
-        match = re.search(reg_pattern, text)
         if match:
-            substr = match.group()
-            substr = re.sub(r's*$', '', substr)
-            return substr
-        
-        text_split = text.split()
+            substring = match.group()
+            substring = re.sub(r's*$', '', substring)
+            return substring
 
-        for pat in self.age_patterns:
-            if pat in text:
-                return pat
-        
-        for word in text_split:
-            if word in self.age_patterns:
-                return word
+        num_pattern = r'(' + '|'.join(self.age_patterns) + r')(.*)'
+        match = re.search(num_pattern, text)
+
+        if match:
+            substring = match.group()
+            return substring
     
     def add_attribute(self, text, attribute, after=False):
         text_split = text.split()

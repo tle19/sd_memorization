@@ -17,8 +17,8 @@ def parse_args():
     parser.add_argument('--temp', type=float, default=1.0)
     parser.add_argument('--top_k', type=int, default=50)
     parser.add_argument('--top_p', type=float, default=0.7)
-    parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--num_beams', type=int, default=1)
+    parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--prompt', type=str, default='')
     parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
@@ -34,9 +34,9 @@ seed = args.seed
 
 if seed:
     set_seed(seed)
-    print(f"Seed {seed} set")
+    print(f"SEED {seed}")
 else:
-    print("No seed set")
+    print("NO SEED")
 
 # Dataset Preprocessing
 if one_prompt == '':
@@ -56,25 +56,25 @@ while os.path.exists(output_path):
 os.makedirs(output_path)
 
 base_images = os.path.join(output_path, 'base_images')
-
 os.makedirs(base_images)
 
 save_csv(df, output_path)
 names = df['Name'].tolist()
 
-print(f'Initialized {dataset}_{count} directory')
-print('Images to generate:', len(names))
+print(f'Directory {dataset}_{count} Initialized')
+print(f'Base Images to Generate: {len(names)}')
+print(f'Batch Images to Generate: {args.output}')
 
 # Load SD & BLIP Models
 sd_model = ImageGeneration(args.sd_model, num_steps, cuda)
-blip_model = CaptionGeneration(args.blip_model, cuda)
-# cogvlm_model = CaptionGeneration2(args.blip_model, cuda)
+blip_model = CaptionGeneration(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
+# cogvlm_model = CaptionGeneration2(args.blip_model, args.temp, args.top_k, args.top_p, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(names, names, base_images)
 
-generated_captions = blip_model.generate_captions(names, base_images, output_path, args.temp, args.top_k, args.top_p, args.num_beams)
-# generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path, args.temp, args.top_k, args.top_p)
+generated_captions = blip_model.generate_captions(names, base_images, output_path)
+# generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path)
 
 for i in range(args.output):
     print(f'\n\033[1m  BATCH {i}:\033[0m')
