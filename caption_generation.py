@@ -159,24 +159,24 @@ class CaptionGeneration:
                 return token.text
                     
     def extract_ethnicity(self, text):
-        print(text)
+        print('DEBUG1:', text)
         proc_text = self.nlp(text)
 
         for token in proc_text:
-            if token.pos_ == 'NORP':
+            if token.label_ in {"NORP", "LANGUAGE", "GPE"}:
+                print('DEBUG2:', token.text)
                 return token.text
             
     def extract_age(self, text):
         digit_pattern = r"(\d+)s?"
-        match = re.search(digit_pattern, text)
+        num_pattern = r'(' + '|'.join(self.age_patterns) + r')\s?-?(' + '|'.join(self.age_patterns) + ')?'
 
+        match = re.search(digit_pattern, text)
         if match:
             substring = match.group(1)
             return substring
 
-        num_pattern = r'(' + '|'.join(self.age_patterns) + r')\s?-?(' + '|'.join(self.age_patterns) + ')?'
         match = re.search(num_pattern, text)
-
         if match:
             substring = match.group()
             return substring
