@@ -137,6 +137,8 @@ class CaptionGeneration:
         for token in doc:
             if is_color_like(token.text):
                 return token.text
+
+        for token in doc:
             if token.pos_ == 'ADJ':
                 return token.text
                     
