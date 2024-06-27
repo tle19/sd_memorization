@@ -78,9 +78,9 @@ for i in range(num_iters):
     fid_scores.append(fid_batch_scores)
     isc_scores.append(isc_batch_scores)
 
-prompts_df['Cosine'] = np.array(cosine_scores).T.tolist()
-prompts_df['FID'] = fid_scores
-prompts_df['IS'] = isc_scores
+prompts_df['Cosine'] = np.array(cosine_scores).T
+prompts_df['FID'] = np.tile(fid_scores, (500, 1))
+prompts_df['IS'] = np.tile(isc_scores, (500, 1))
 
 prompts_df.to_csv(csv_path, index=False)
 
@@ -89,5 +89,5 @@ cos_scores = prompts_df['Cosine'][prompts_df['is_human']]
 
 print('\n\033[1mMetrics\033[0m')
 print(f'Cosine Score: {np.mean(np.mean(cos_scores))}')
-print(f'FID Score: {np.mean(np.mean(fid_scores))}')
-print(f'IS Score: {np.mean(np.mean(isc_scores))}')
+print(f'FID Score: {np.mean(fid_scores)}')
+print(f'IS Score: {np.mean(isc_scores)}')

@@ -40,7 +40,7 @@ class CaptionGeneration:
             'white', 'black', 'caucasian', 'latino', 'latina',
             'indigenous', 'pacific islander', 'middle eastern'
             'jew', 'romani', 'persian', 'polynesian', 'chicano',
-            'eskimo', 'somoan', 'biracial', 'mixed-race'
+            'eskimo', 'somoan', 'biracial', 'mixed'
         ]
 
         self.age_patterns = [
@@ -79,14 +79,7 @@ class CaptionGeneration:
 
             pre_prompt = "this is a picture of"
             text = self.generate_one_caption(
-                image, 
-                pre_prompt, 
-                self.temp, 
-                self.top_k, 
-                self.top_p, 
-                self.num_beams, 
-                min_length=30, 
-                max_length=40
+                image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
             )
 
             if any(word in self.human_nouns for word in text.split()):
@@ -114,13 +107,7 @@ class CaptionGeneration:
         answers = []
         for question in self.blip_questions:
             answer = self.generate_one_caption(
-                image, 
-                question, 
-                self.temp, 
-                self.top_k, 
-                self.top_p, 
-                self.num_beams, 
-                max_length=25
+                image, question, 1.0, 50, 1.0, 1, max_length=30
             )
 
             if "ethnicity" in question:
