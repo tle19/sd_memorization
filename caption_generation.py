@@ -5,6 +5,7 @@ import spacy
 import re
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
+from matplotlib.colors import is_color_like
 from utils import print_title, punc_splice
 
 class CaptionGeneration:
@@ -48,12 +49,26 @@ class CaptionGeneration:
             'twenty', 'thirty', 'forty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
             'twenties', 'thirties', 'forties', 'fourties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
         ]
+    
+    def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
+        inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
 
-        self.bad_answers = [
-            'i don\'t know', 'i do not know', 'i dont know', 'i am not sure', 'i\'m not sure', 
-            'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
-        ]
-        
+        generated_ids = self.model.generate(
+            **inputs, 
+            temperature=temp, 
+            top_k=top_k, 
+            top_p=top_p, 
+            num_beams=num_beams, 
+            min_length=min_length, 
+            max_length=max_length, 
+            do_sample=True
+        )
+
+        text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+        text = text.lower().replace('.', ',')
+
+        return text
+            
     def generate_captions(self, prompts, path, output_path):
         generated_captions = []
         is_human = []
@@ -95,25 +110,6 @@ class CaptionGeneration:
 
         return generated_captions
     
-    def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
-        inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
-
-        generated_ids = self.model.generate(
-            **inputs, 
-            temperature=temp, 
-            top_k=top_k, 
-            top_p=top_p, 
-            num_beams=num_beams, 
-            min_length=min_length, 
-            max_length=max_length, 
-            do_sample=True
-        )
-
-        text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-        text = text.lower().replace('.', ',')
-
-        return text
-    
     def additional_attributes(self, image, text):
         answers = []
         for question in self.blip_questions:
@@ -126,15 +122,13 @@ class CaptionGeneration:
                 self.num_beams, 
                 max_length=25
             )
-            
-            # answer = self.filter_vague(answer, question)
 
             if "ethnicity" in question:
                 answer = self.extract_ethnicity(answer)
             elif 'age' in question:
                 answer = self.extract_age(answer)
             else:
-                answer = self.extract_adjective(answer)
+                answer = self.extract_color(answer)
                 
             if not answer:
                 answer = self.blip_questions[question]
@@ -148,21 +142,14 @@ class CaptionGeneration:
         text = self.add_attribute(text, age_and_ethnicity)
 
         return text
-    
-    def filter_vague(self, answer, question):
-        for bad_ans in self.bad_answers:
-            if bad_ans in answer:
-                default_answer = self.blip_questions[question]
-                answer = answer.replace(bad_ans, default_answer)
-                break
-
-        return answer
   
-    def extract_adjective(self, text):
-        print('DEBUG ADJ:', text)
+    def extract_color(self, text):
+        print('DEBUG COL:', text)
         doc = self.nlp(text)
 
         for token in doc:
+            if is_color_like(token.text):
+                return token.text
             if token.pos_ == 'ADJ':
                 return token.text
                     
@@ -171,7 +158,7 @@ class CaptionGeneration:
         doc = self.nlp(text)
 
         for ent in doc.ents:
-            if ent.label_ in {"NORP", "LANGUAGE", "GPE"}:
+            if ent.label_ in ["NORP", "LANGUAGE", "GPE"]:
                 return ent.text
         
         for token in doc:
@@ -191,6 +178,7 @@ class CaptionGeneration:
         match = re.search(num_pattern, text)
         if match:
             substring = match.group()
+            substring = substring.replace('ies', 'y')
             return substring
     
     def add_attribute(self, text, attribute, after=False):
