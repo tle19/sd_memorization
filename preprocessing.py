@@ -2,10 +2,6 @@ import os
 import pandas as pd
 import re
 
-def save_csv(df, output_path):
-    output_path = os.path.join(output_path, 'prompts.csv')
-    df.to_csv(output_path, index=False)
-
 def preprocessing(dataset, num_ppl, seed):
     dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
     csv_path = find_file(dataset_path)

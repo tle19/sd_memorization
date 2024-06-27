@@ -11,12 +11,12 @@ class ImageGeneration:
         self.pipe = self.pipe.to(self.device)
         self.num_steps = num_steps
 
-    def generate_images(self, names, prompts, sd_folder_path1):
+    def generate_images(self, names, prompts, image_folder):
         for index, prompt in enumerate(prompts):
             print_title('IMAGE', names[index], index)
 
             with torch.no_grad():
                 image = self.pipe(prompt, num_inference_steps=self.num_steps, width=512, height=512).images[0]
 
-            image_path = os.path.join(sd_folder_path1, names[index] + '.png')
+            image_path = os.path.join(image_folder, names[index] + '.png')
             image.save(image_path)

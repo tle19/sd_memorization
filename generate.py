@@ -5,7 +5,7 @@ from transformers import set_seed
 from image_generation import ImageGeneration
 from caption_generation import CaptionGeneration
 # from cogvlm import CaptionGeneration2
-from preprocessing import preprocessing, save_csv
+from preprocessing import preprocessing
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Image & Prompt Generation")
@@ -32,6 +32,7 @@ one_prompt = args.prompt
 cuda = args.cuda
 seed = args.seed
 
+# Optional Seed
 if seed:
     set_seed(seed)
     print(f"SEED {seed}")
@@ -48,17 +49,16 @@ else:
 # Directory Initilization
 count = 0
 output_path = os.path.join('output', dataset, f'{dataset}_{count}')
-
 while os.path.exists(output_path):
     count += 1
     output_path = os.path.join('output', dataset, f'{dataset}_{count}')
 
 os.makedirs(output_path)
-
 base_images = os.path.join(output_path, 'base_images')
 os.makedirs(base_images)
 
-save_csv(df, output_path)
+prompts_csv = os.path.join(output_path, 'prompts.csv')
+df.to_csv(prompts_csv, index=False)
 names = df['Name'].tolist()
 
 print(f'Directory {dataset}_{count} Initialized')
@@ -78,6 +78,8 @@ generated_captions = blip_model.generate_captions(names, base_images, output_pat
 
 for i in range(args.output):
     print(f'\n\033[1m  BATCH {i}:\033[0m')
+
     generated_images = os.path.join(output_path, f'generated_images_{i}')
     os.makedirs(generated_images)
+
     sd_model.generate_images(names, generated_captions, generated_images)

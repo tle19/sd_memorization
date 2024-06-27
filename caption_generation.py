@@ -183,7 +183,6 @@ class CaptionGeneration:
     
     def add_attribute(self, text, attribute, after=False):
         text_split = text.split()
-
         insert_index = 0
 
         for i, word in enumerate(text_split):
