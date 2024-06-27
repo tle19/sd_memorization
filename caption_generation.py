@@ -152,20 +152,18 @@ class CaptionGeneration:
         return answer
   
     def extract_adjective(self, text):
-        proc_text = self.nlp(text)
+        doc = self.nlp(text)
 
-        for token in proc_text:
+        for token in doc:
             if token.pos_ == 'ADJ':
                 return token.text
                     
     def extract_ethnicity(self, text):
-        print('DEBUG1:', text)
-        proc_text = self.nlp(text)
+        doc = self.nlp(text)
 
-        for token in proc_text:
-            if token.label_ in {"NORP", "LANGUAGE", "GPE"}:
-                print('DEBUG2:', token.text)
-                return token.text
+        for ent in doc.ents:
+            if ent.label_ in {"NORP", "LANGUAGE", "GPE"}:
+                return ent.text
             
     def extract_age(self, text):
         digit_pattern = r"(\d+)s?"
