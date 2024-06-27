@@ -30,16 +30,16 @@ class CaptionGeneration:
             'singer', 'singers'
         ]
 
+        self.age_patterns = [
+            'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eightteen', 'nineteen',
+            'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
+            'twenties', 'thirties', 'forties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
+        ]
+
         self.bad_answers = [
             'i don\'t know', 'i do not know', 'i dont know', 'i am not sure', 'i\'m not sure', 
             'unknown', 'mystery', 'it depends', 'it ain\'t', 'i have no idea'
-        ]
-
-        self.age_patterns = [
-            'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
-            'twenties', 'thirties', 'forties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties',
-            'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-            'eleven', 'twelve', 'teen'
         ]
         
     def generate_captions(self, prompts, path, output_path, temp, k, p, beams):
@@ -58,27 +58,30 @@ class CaptionGeneration:
             else:
                 is_human.append(False)
             
-            answers = []
-            for question in self.blip_questions:
-                answer = self.generate_one_caption(image, question, temp, k, p, beams, max=25).lower()
-                answer = self.filter_vague(answer, question)
+            if is_human[-1]:
 
-                if 'age' in question:
-                    answer = self.extract_age(answer)
-                else:
-                    answer = self.extract_adjective(answer)
-                    
-                if not answer:
-                    answer = self.blip_questions[question]
+                answers = []
+                for question in self.blip_questions:
+                    answer = self.generate_one_caption(image, question, temp, k, p, beams, max=25).lower()
+                    answer = self.filter_vague(answer, question)
 
-                answers.append(answer)
+                    if "ethnicity" in question:
+                        answer = self.extract_ethnicity(answer)
+                    elif 'age' in question:
+                        answer = self.extract_age(answer)
+                    else:
+                        answer = self.extract_adjective(answer)
+                        
+                    if not answer:
+                        answer = self.blip_questions[question]
 
-            hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-            age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
-            
-            text = self.add_attribute(text, hair_and_eyes, True)
-            text = self.add_attribute(text, age_and_ethnicity)
-            re.sub(r'\s+', ' ', text)
+                    answers.append(answer)
+
+                hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
+                age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
+                
+                text = self.add_attribute(text, hair_and_eyes, True)
+                text = self.add_attribute(text, age_and_ethnicity)
 
             generated_captions.append(text)
 
@@ -117,43 +120,48 @@ class CaptionGeneration:
         proc_text = self.nlp(text)
 
         for token in proc_text:
-            if token.pos_ == 'ADJ' or token.pos_ == 'PROPN':
-                return punc_splice(',', token.text)
-
-    def extract_age(self, text):
-
-        proc_text = self.nlp(text)
-        
-        reg_pattern = r"\b\d+s\b"
-
-        for token in proc_text:
-            if token.like_num:
+            if token.pos_ == 'ADJ':
                 return token.text
-            else:
-                if re.search(reg_pattern, token.text):
-                    return token.text.replace('s', '')
-                for pat in self.age_patterns:
-                    if pat in token.text:
-                        return token.text
-    
-    def add_attribute(self, text, adjective, add_modifier=False):
+                    
+    def extract_ethnicity(self, text):
         proc_text = self.nlp(text)
 
-        modified_text = []
-        inserted = False
-        
         for token in proc_text:
-            if token.pos_ == 'NOUN' and not inserted:
-                if add_modifier:
-                    modified_text.append(token.text)
-                    modified_text.append(adjective)
-                else:
-                    modified_text.append(adjective)
-                    modified_text.append(token.text)
-                inserted = True
-            else:
-                modified_text.append(token.text)
+            if token.pos_ == 'NORP':
+                return token.text
+            
+    def extract_age(self, text):
+        reg_pattern = r"\d+s*?"
 
-        modified_text = ' '.join(modified_text)
+        match = re.search(reg_pattern, text)
+        if match:
+            substr = match.group()
+            substr = re.sub(r's*$', '', substr)
+            return substr
+        
+        text_split = text.split()
+
+        for pat in self.age_patterns:
+            if pat in text:
+                return pat
+        
+        for word in text_split:
+            if word in self.age_patterns:
+                return word
+    
+    def add_attribute(self, text, attribute, after=False):
+        text_split = text.split()
+
+        insert_index = 0
+
+        for i, word in enumerate(text_split):
+            if word in self.human_nouns:
+                insert_index = i
+                if after:
+                    insert_index += 1
+                break
+
+        text_split.insert(insert_index, attribute)    
+        modified_text = ' '.join(text_split)
 
         return modified_text
