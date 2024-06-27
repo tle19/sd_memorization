@@ -37,9 +37,9 @@ class CaptionGeneration:
 
         self.age_patterns = [
             'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eightteen', 'nineteen',
-            'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
-            'twenties', 'thirties', 'forties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
+            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'eightteen', 'nineteen',
+            'twenty', 'thirty', 'forty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
+            'twenties', 'thirties', 'forties', 'fourties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
         ]
 
         self.bad_answers = [
@@ -167,15 +167,14 @@ class CaptionGeneration:
                 return token.text
             
     def extract_age(self, text):
-        digit_pattern = r"\d+s*?"
+        digit_pattern = r"(\d+)s?"
         match = re.search(digit_pattern, text)
 
         if match:
-            substring = match.group()
-            substring = re.sub(r's*$', '', substring)
+            substring = match.group(1)
             return substring
 
-        num_pattern = r'(' + '|'.join(self.age_patterns) + r')(.*)'
+        num_pattern = r'(' + '|'.join(self.age_patterns) + r')\s?-?(' + '|'.join(self.age_patterns) + ')?'
         match = re.search(num_pattern, text)
 
         if match:
