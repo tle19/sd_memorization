@@ -29,10 +29,17 @@ class CaptionGeneration:
         }
 
         self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl', 'gentleman', 'lady', 
+            'man', 'men', 'woman', 'women', 'boy', 'girl', 'gentleman', 'lady', 'guy', 'gal'
             'child', 'children', 'adult', 'adults', 'baby', 'babies',
             'person', 'people', 'actor', 'actress', 'lady', 'players',
-            'singer', 'singers'
+            'singer', 'singers', 'player'
+        ]
+
+        self.ethnicity_lexicon = [
+            'white', 'black', 'caucasian', 'latino', 'latina',
+            'indigenous', 'pacific islander', 'middle eastern'
+            'jew', 'romani', 'persian', 'polynesian', 'chicano',
+            'eskimo', 'somoan', 'biracial', 'mixed-race'
         ]
 
         self.age_patterns = [
@@ -120,7 +127,7 @@ class CaptionGeneration:
                 max_length=25
             )
             
-            answer = self.filter_vague(answer, question)
+            # answer = self.filter_vague(answer, question)
 
             if "ethnicity" in question:
                 answer = self.extract_ethnicity(answer)
@@ -152,6 +159,7 @@ class CaptionGeneration:
         return answer
   
     def extract_adjective(self, text):
+        print('DEBUG ADJ:', text)
         doc = self.nlp(text)
 
         for token in doc:
@@ -159,14 +167,19 @@ class CaptionGeneration:
                 return token.text
                     
     def extract_ethnicity(self, text):
-        print('DEBUG1:', text)
+        print('DEBUG ETH:', text)
         doc = self.nlp(text)
 
         for ent in doc.ents:
             if ent.label_ in {"NORP", "LANGUAGE", "GPE"}:
                 return ent.text
-            
+        
+        for token in doc:
+            if token.text in self.ethnicity_lexicon:
+                return token.text
+
     def extract_age(self, text):
+        print('DEBUG AGE:', text)
         digit_pattern = r"(\d+)s?"
         num_pattern = r'(' + '|'.join(self.age_patterns) + r')\s?-?(' + '|'.join(self.age_patterns) + ')?'
 
