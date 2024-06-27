@@ -63,7 +63,7 @@ names = df['Name'].tolist()
 
 print(f'Directory {dataset}_{count} Initialized')
 print(f'Base Images to Generate: {len(names)}')
-print(f'Batch Images to Generate: {args.output}')
+print(f'Batch Images to Generate: {len(names)} x {args.output}')
 
 # Load SD & BLIP Models
 sd_model = ImageGeneration(args.sd_model, num_steps, cuda)

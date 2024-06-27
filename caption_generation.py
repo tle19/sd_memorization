@@ -143,7 +143,6 @@ class CaptionGeneration:
         return text
     
     def filter_vague(self, answer, question):
-        
         for bad_ans in self.bad_answers:
             if bad_ans in answer:
                 default_answer = self.blip_questions[question]
@@ -160,6 +159,7 @@ class CaptionGeneration:
                 return token.text
                     
     def extract_ethnicity(self, text):
+        print(text)
         proc_text = self.nlp(text)
 
         for token in proc_text:
