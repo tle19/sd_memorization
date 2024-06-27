@@ -159,6 +159,7 @@ class CaptionGeneration:
                 return token.text
                     
     def extract_ethnicity(self, text):
+        print('DEBUG1:', text)
         doc = self.nlp(text)
 
         for ent in doc.ents:
