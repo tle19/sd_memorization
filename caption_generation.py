@@ -60,17 +60,18 @@ class CaptionGeneration:
     
     def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
-
-        generated_ids = self.model.generate(
-            **inputs, 
-            temperature=temp, 
-            top_k=top_k, 
-            top_p=top_p, 
-            num_beams=num_beams, 
-            min_length=min_length, 
-            max_length=max_length, 
-            do_sample=True
-        )
+        
+        with torch.no_grad():
+            generated_ids = self.model.generate(
+                **inputs, 
+                temperature=temp, 
+                top_k=top_k, 
+                top_p=top_p, 
+                num_beams=num_beams, 
+                min_length=min_length, 
+                max_length=max_length, 
+                do_sample=True
+            )
 
         text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         text = text.lower().replace('.', ',')

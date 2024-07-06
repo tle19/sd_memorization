@@ -13,7 +13,7 @@ def parse_args():
     parser.add_argument('--blip_model', type=str, default="Salesforce/blip2-opt-2.7b")
     parser.add_argument('--dataset', type=str, default="imdb")
     parser.add_argument('--input', type=int, default=99999999)
-    parser.add_argument('--output', type=int, default=1)
+    parser.add_argument('--batch', type=int, default=1)
     parser.add_argument('--temp', type=float, default=1.0)
     parser.add_argument('--top_k', type=int, default=50)
     parser.add_argument('--top_p', type=float, default=0.7)
@@ -63,20 +63,20 @@ names = df['Name'].tolist()
 
 print(f'Directory {dataset}_{count} Initialized')
 print(f'Base Images to Generate: {len(names)}')
-print(f'Batch Images to Generate: {len(names)} x {args.output}')
+print(f'Batch Images to Generate: {len(names)} x {args.batch}')
 
 # Load SD & BLIP Models
 sd_model = ImageGeneration(args.sd_model, num_steps, cuda)
 blip_model = CaptionGeneration(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
-# cogvlm_model = CaptionGeneration2(args.blip_model, args.temp, args.top_k, args.top_p, cuda)
+# cogvlm_model = CaptionGeneration2(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(names, names, base_images)
 
 generated_captions = blip_model.generate_captions(names, base_images, output_path)
-# generated_prompts = cogvlm_model.generate_captions(prompts, base_images, output_path)
+# generated_captions = cogvlm_model.generate_captions(names, base_images, output_path)
 
-for i in range(args.output):
+for i in range(args.batch):
     print(f'\n\033[1m  BATCH {i}:\033[0m')
 
     generated_images = os.path.join(output_path, f'generated_images_{i}')

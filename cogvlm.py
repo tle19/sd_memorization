@@ -15,9 +15,10 @@ class CaptionGeneration2:
         self.model.to(self.device).eval()
 
         self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl', 'he', 'she', 'his', 'her', 'lady',
-            'child', 'children', 'adult', 'adults', 'baby', 'babies',
-            'person', 'people', 'actor', 'actress', 'lady', 'players'
+            'man', 'men', 'woman', 'women', 'boy', 'boys', 'girl', 'girls',
+            'gentleman', 'gentlemen', 'lady', 'ladies', 'guy', 'gal', 'guys', 'gals',
+            'adult', 'adults', 'teen', 'teens', 'child', 'children', 'baby', 'babies',
+            'person', 'people', 'actor', 'actress', 'singer', 'singers', 'player', 'players'
         ]
     
     def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
@@ -50,11 +51,15 @@ class CaptionGeneration2:
                 image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
             )
 
+            # check if caption defines a human
             if any(word in self.human_nouns for word in text.split()):
                 is_human.append(True)
             else:
                 is_human.append(False)
 
+            if is_human[-1]:
+                text = self.additional_attributes(image, text)
+                
             generated_captions.append(text)
 
             print_title('PROMPT', prompt, index)
