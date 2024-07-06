@@ -3,10 +3,11 @@ import torch
 import pandas as pd
 import spacy
 import re
+import json
 from PIL import Image
 from transformers import Blip2Processor, Blip2ForConditionalGeneration
 from matplotlib.colors import is_color_like
-from utils import print_title, punc_splice
+from utils import print_title
 
 class CaptionGeneration:
     
@@ -23,17 +24,17 @@ class CaptionGeneration:
         self.nlp = spacy.load('en_core_web_sm')
 
         self.blip_questions = {
-            'Question: What color is their hair? Answer:': "black",
-            'Question: What color is their eyes? Answer:': "brown",
+            'Question: What is their hair color? Answer:': "black",
+            'Question: What is their eye color? Answer:': "brown",
             'Question: What is their ethnicity? Answer:': "white",
             'Question: What is their approximate age? Answer:': "35"
         }
 
         self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'girl', 'gentleman', 'lady', 'guy', 'gal'
-            'child', 'children', 'adult', 'adults', 'baby', 'babies',
-            'person', 'people', 'actor', 'actress', 'lady', 'players',
-            'singer', 'singers', 'player'
+            'man', 'men', 'woman', 'women', 'boy', 'boys', 'girl', 'girls',
+            'gentleman', 'gentlemen', 'lady', 'ladies', 'guy', 'gal', 'guys', 'gals',
+            'adult', 'adults', 'teen', 'teens', 'child', 'children', 'baby', 'babies',
+            'person', 'people', 'actor', 'actress', 'singer', 'singers', 'player', 'players'
         ]
 
         self.ethnicity_lexicon = [
@@ -49,6 +50,13 @@ class CaptionGeneration:
             'twenty', 'thirty', 'forty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
             'twenties', 'thirties', 'forties', 'fourties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
         ]
+
+        # with open('human_attributes.json', 'r') as file:
+        #     data = json.load(file)
+
+        # self.human_nouns = data['human_nouns']
+        # self.ethnicity_lexicon = data['ethnicity_lexicon']
+        # self.age_patterns = data['age_patterns']
     
     def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
@@ -82,6 +90,7 @@ class CaptionGeneration:
                 image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
             )
 
+            # check if caption defines a human
             if any(word in self.human_nouns for word in text.split()):
                 is_human.append(True)
             else:
@@ -110,6 +119,7 @@ class CaptionGeneration:
                 image, question, 1.0, 50, 1.0, 1, max_length=30
             )
 
+            # Extract Features
             if "ethnicity" in question:
                 answer = self.extract_ethnicity(answer)
             elif 'age' in question:
@@ -117,6 +127,7 @@ class CaptionGeneration:
             else:
                 answer = self.extract_color(answer)
                 
+            # replace with default feature if no feature found
             if not answer:
                 answer = self.blip_questions[question]
 
@@ -131,7 +142,6 @@ class CaptionGeneration:
         return text
   
     def extract_color(self, text):
-        print('DEBUG COL:', text)
         doc = self.nlp(text)
 
         for token in doc:
@@ -143,7 +153,6 @@ class CaptionGeneration:
                 return token.text
                     
     def extract_ethnicity(self, text):
-        print('DEBUG ETH:', text)
         doc = self.nlp(text)
 
         for ent in doc.ents:
@@ -155,7 +164,6 @@ class CaptionGeneration:
                 return token.text
 
     def extract_age(self, text):
-        print('DEBUG AGE:', text)
         digit_pattern = r"(\d+)s?"
         num_pattern = r'(' + '|'.join(self.age_patterns) + r')\s?-?(' + '|'.join(self.age_patterns) + ')?'
 

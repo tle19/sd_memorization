@@ -13,7 +13,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Memorization Metrics")
     parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--folder', type=str, default="imdb_0")
-    parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args
@@ -25,12 +24,14 @@ cuda = args.cuda
 seed = args.seed
 dataset = punc_splice('_', folder)
 
+# Optional Seed
 if seed:
     set_seed(seed)
     print(f"SEED {seed}")
 else:
     print("NO SEED")
 
+# Image Embedding Type
 if model_type == 'clip':
     model = CLIPEmbed(cuda)
 elif model_type == 'dino':
@@ -58,6 +59,7 @@ isc_scores = []
 for i in range(num_iters):
     generated_images = os.path.join(output_path, f'generated_images_{i}')
 
+    # filter out non-human images for FID/ISC
     temp_gen = os.path.join(output_path, 'temp_gen')
     make_temp_dir(generated_images, temp_gen, cond)
 
@@ -68,6 +70,7 @@ for i in range(num_iters):
 
     print(f'\n\033[1m  BATCH {i}:\033[0m')
 
+    # Cosine Similarity on Image Embedding
     for index, name in enumerate(names):
         print_title('IMAGE', name, index)
         if prompts_df['is_human'][index]:
@@ -102,9 +105,9 @@ prompts_df['IS'] = str(isc_scores)
 
 prompts_df.to_csv(csv_path, index=False)
 
-# printed metrics
 cosine_avg = prompts_df['Cosine Avg'][prompts_df['is_human']]
 
+# Printed Metrics
 print('\n\033[1mMetrics\033[0m')
 print(f'Cosine Score: {np.mean(cosine_avg)}')
 print(f'FID Score: {np.mean(fid_scores)}')

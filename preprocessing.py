@@ -51,7 +51,7 @@ def column_name(dataset):
     datasets = {
         'imdb': 'primaryName',
         'everypolitician': 'name'
-        # dataset_name: column_name
+        # 'dataset_name': 'column_name'
     }
     if dataset in datasets:
         return datasets[dataset]
