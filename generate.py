@@ -74,7 +74,7 @@ blip_model = CaptionGeneration(args.blip_model, args.temp, args.top_k, args.top_
 sd_model.generate_images(names, names, base_images)
 
 generated_captions = blip_model.generate_captions(names, base_images, output_path)
-# generated_prompts = cogvlm_model.generate_captions(prompts, image_path1, output_path)
+# generated_prompts = cogvlm_model.generate_captions(prompts, base_images, output_path)
 
 for i in range(args.output):
     print(f'\n\033[1m  BATCH {i}:\033[0m')
