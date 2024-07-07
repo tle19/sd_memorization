@@ -68,7 +68,7 @@ print(f'Batch Images to Generate: {len(names)} x {args.batch}')
 # Load SD & BLIP Models
 sd_model = ImageGeneration(args.sd_model, num_steps, cuda)
 # blip_model = CaptionGeneration(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
-cogvlm_model = CaptionGeneration2(args.blip_model, cuda)
+cogvlm_model = CaptionGeneration2(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(names, names, base_images)
