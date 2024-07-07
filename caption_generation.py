@@ -30,37 +30,37 @@ class CaptionGeneration:
             'Question: What is their approximate age? Answer:': "35"
         }
 
-        self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'boys', 'girl', 'girls',
-            'gentleman', 'gentlemen', 'lady', 'ladies', 'guy', 'gal', 'guys', 'gals',
-            'adult', 'adults', 'teen', 'teens', 'child', 'children', 'baby', 'babies',
-            'person', 'people', 'actor', 'actress', 'singer', 'singers', 'player', 'players'
-        ]
+        # self.human_nouns = [
+        #     'man', 'men', 'woman', 'women', 'boy', 'boys', 'girl', 'girls', 'male', 'males', 'female', 'females',
+        #     'gentleman', 'gentlemen', 'lady', 'ladies', 'guy', 'gal', 'guys', 'gals',
+        #     'adult', 'adults', 'teen', 'teens', 'child', 'children', 'baby', 'babies',
+        #     'person', 'people', 'actor', 'actress', 'singer', 'singers', 'player', 'players'
+        # ]
 
-        self.ethnicity_lexicon = [
-            'white', 'black', 'caucasian', 'latino', 'latina',
-            'indigenous', 'pacific islander', 'middle eastern'
-            'jew', 'romani', 'persian', 'polynesian', 'chicano',
-            'eskimo', 'somoan', 'biracial', 'mixed'
-        ]
+        # self.ethnicity_lexicon = [
+        #     'white', 'black', 'caucasian', 'latino', 'latina',
+        #     'indigenous', 'pacific islander', 'middle eastern'
+        #     'jew', 'romani', 'persian', 'polynesian', 'chicano',
+        #     'eskimo', 'somoan', 'biracial', 'mixed'
+        # ]
 
-        self.age_patterns = [
-            'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-            'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'eightteen', 'nineteen',
-            'twenty', 'thirty', 'forty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
-            'twenties', 'thirties', 'forties', 'fourties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
-        ]
+        # self.age_patterns = [
+        #     'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+        #     'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'eightteen', 'nineteen',
+        #     'twenty', 'thirty', 'forty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
+        #     'twenties', 'thirties', 'forties', 'fourties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
+        # ]
 
-        # with open('human_attributes.json', 'r') as file:
-        #     data = json.load(file)
+        with open('human_attributes.json', 'r') as file:
+            data = json.load(file)
 
-        # self.human_nouns = data['human_nouns']
-        # self.ethnicity_lexicon = data['ethnicity_lexicon']
-        # self.age_patterns = data['age_patterns']
+        self.human_nouns = data['human_nouns']
+        self.ethnicity_lexicon = data['ethnicity_lexicon']
+        self.age_patterns = data['age_patterns']
     
     def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
         inputs = self.processor(image, text=prompt, return_tensors="pt").to(self.device, torch.float16)
-        
+
         with torch.no_grad():
             generated_ids = self.model.generate(
                 **inputs, 
@@ -119,6 +119,7 @@ class CaptionGeneration:
             answer = self.generate_one_caption(
                 image, question, 1.0, 50, 1.0, 1, max_length=30
             )
+            answer = answer.replace(',', ' ')
 
             # Extract Features
             if "ethnicity" in question:

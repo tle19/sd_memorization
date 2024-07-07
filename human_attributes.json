@@ -1,6 +1,6 @@
 {
     "human_nouns": [
-        "man", "men", "woman", "women", "boy", "boys", "girl", "girls",
+        "man", "men", "woman", "women", "boy", "boys", "girl", "girls", "male", "males", "female", "females",
         "gentleman", "gentlemen", "lady", "ladies", "guy", "gal", "guys", "gals",
         "adult", "adults", "teen", "teens", "child", "children", "baby", "babies",
         "person", "people", "actor", "actress", "singer", "singers", "player", "players"

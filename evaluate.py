@@ -13,6 +13,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Memorization Metrics")
     parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--folder', type=str, default="imdb_0")
+    parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args

@@ -1,11 +1,11 @@
 import os
 import torch
 import pandas as pd
+import json
 from PIL import Image
 from transformers import AutoModelForCausalLM, LlamaTokenizer
 from utils import print_title
 
-# chat example
 class CaptionGeneration2:
 
     def __init__(self, model_id, temp, top_k, top_p, num_beams, cuda):
@@ -14,12 +14,12 @@ class CaptionGeneration2:
         self.model = AutoModelForCausalLM.from_pretrained('THUDM/cogvlm-chat-hf', torch_dtype=torch.bfloat16, low_cpu_mem_usage=True, trust_remote_code=True)
         self.model.to(self.device).eval()
 
-        self.human_nouns = [
-            'man', 'men', 'woman', 'women', 'boy', 'boys', 'girl', 'girls',
-            'gentleman', 'gentlemen', 'lady', 'ladies', 'guy', 'gal', 'guys', 'gals',
-            'adult', 'adults', 'teen', 'teens', 'child', 'children', 'baby', 'babies',
-            'person', 'people', 'actor', 'actress', 'singer', 'singers', 'player', 'players'
-        ]
+        with open('human_attributes.json', 'r') as file:
+            data = json.load(file)
+
+        self.human_nouns = data['human_nouns']
+        self.ethnicity_lexicon = data['ethnicity_lexicon']
+        self.age_patterns = data['age_patterns']
     
     def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
         inputs = self.model.build_conversation_input_ids(self.tokenizer, query=prompt, history=[], images=[image])  # chat mode
@@ -59,7 +59,7 @@ class CaptionGeneration2:
 
             if is_human[-1]:
                 text = self.additional_attributes(image, text)
-                
+
             generated_captions.append(text)
 
             print_title('PROMPT', prompt, index)

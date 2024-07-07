@@ -15,12 +15,16 @@ def preprocessing(dataset, num_ppl, seed):
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
     
+    # df = df[df['birthYear'] >= 1960]]
+    # df = df[(df['birthYear'] >= 1960) & (df['birthYear'] <= 1980)]
     df = df.rename(columns={original_name: 'Name'})
     df = df[['Name']]
+    
     df = df.dropna()
     df = df.drop_duplicates(subset='Name', keep='first')
     df = df[df['Name'].apply(is_english)]
     df = df[df['Name'].apply(is_name)]
+
     size = df.shape[0]
     
     if num_ppl > size:
