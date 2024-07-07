@@ -30,27 +30,6 @@ class CaptionGeneration:
             'Question: What is their approximate age? Answer:': "35"
         }
 
-        # self.human_nouns = [
-        #     'man', 'men', 'woman', 'women', 'boy', 'boys', 'girl', 'girls', 'male', 'males', 'female', 'females',
-        #     'gentleman', 'gentlemen', 'lady', 'ladies', 'guy', 'gal', 'guys', 'gals',
-        #     'adult', 'adults', 'teen', 'teens', 'child', 'children', 'baby', 'babies',
-        #     'person', 'people', 'actor', 'actress', 'singer', 'singers', 'player', 'players'
-        # ]
-
-        # self.ethnicity_lexicon = [
-        #     'white', 'black', 'caucasian', 'latino', 'latina',
-        #     'indigenous', 'pacific islander', 'middle eastern'
-        #     'jew', 'romani', 'persian', 'polynesian', 'chicano',
-        #     'eskimo', 'somoan', 'biracial', 'mixed'
-        # ]
-
-        # self.age_patterns = [
-        #     'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-        #     'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'eightteen', 'nineteen',
-        #     'twenty', 'thirty', 'forty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
-        #     'twenties', 'thirties', 'forties', 'fourties', 'fifties', 'sixties', 'seventies', 'eighties', 'nineties'
-        # ]
-
         with open('human_attributes.json', 'r') as file:
             data = json.load(file)
 
