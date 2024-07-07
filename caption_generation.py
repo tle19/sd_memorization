@@ -21,7 +21,7 @@ class CaptionGeneration:
         self.top_k = top_k
         self.top_p = top_p
         self.num_beams = num_beams
-        self.nlp = spacy.load('en_core_web_sm')
+        self.nlp = spacy.load('en_core_web_md')
 
         self.blip_questions = {
             'Question: What is their hair color? Answer:': "black",
