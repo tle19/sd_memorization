@@ -3,8 +3,7 @@ import argparse
 import pandas as pd
 from transformers import set_seed
 from image_generation import ImageGeneration
-# from caption_generation import CaptionGeneration
-from cogvlm import CaptionGeneration2
+from caption_generation import CaptionGeneration
 from preprocessing import preprocessing
     
 def parse_args():
@@ -67,15 +66,11 @@ print(f'Batch Images to Generate: {len(names)} x {args.batch}')
 
 # Load SD & BLIP Models
 sd_model = ImageGeneration(args.sd_model, num_steps, cuda)
-# blip_model = CaptionGeneration(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
-cogvlm_model = CaptionGeneration2(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
+blip_model = CaptionGeneration(args.blip_model, args.temp, args.top_k, args.top_p, args.num_beams, cuda)
 
 # Image and Prompt Generation
 sd_model.generate_images(names, names, base_images)
-
-# generated_captions = blip_model.generate_captions(names, base_images, output_path)
-generated_captions = cogvlm_model.generate_captions(names, base_images, output_path)
-
+generated_captions = blip_model.generate_captions(names, base_images, output_path)
 for i in range(args.batch):
     print(f'\n\033[1m  BATCH {i}:\033[0m')
 
