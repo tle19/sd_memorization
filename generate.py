@@ -19,6 +19,8 @@ def parse_args():
     parser.add_argument('--num_beams', type=int, default=1)
     parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--prompt', type=str, default='')
+    parser.add_argument('--yr1', type=int, default=2000)
+    parser.add_argument('--yr2', type=int, default=2024)
     parser.add_argument('--cuda', type=str, default='cuda')
     parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
@@ -40,7 +42,7 @@ else:
 
 # Dataset Preprocessing
 if one_prompt == '':
-    df = preprocessing(dataset, args.input, seed)
+    df = preprocessing(dataset, args.input, seed, args.yr1, args.yr2)
 else:
     dataset = 'prompts'
     df = pd.DataFrame([one_prompt], columns=['Name']) 

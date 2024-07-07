@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import re
 
-def preprocessing(dataset, num_ppl, seed):
+def preprocessing(dataset, num_ppl, seed, yr1, yr2):
     dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
     csv_path = find_file(dataset_path)
 
@@ -15,8 +15,7 @@ def preprocessing(dataset, num_ppl, seed):
     df = pd.DataFrame(csv_file)
     original_name = column_name(dataset)
     
-    # df = df[df['birthYear'] >= 1960]]
-    # df = df[(df['birthYear'] >= 1960) & (df['birthYear'] <= 1980)]
+    df = df[(df['birthYear'] >= yr1) & (df['birthYear'] <= yr2)]
     df = df.rename(columns={original_name: 'Name'})
     df = df[['Name']]
     
