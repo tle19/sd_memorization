@@ -14,6 +14,11 @@ class CaptionGeneration2:
         self.model = AutoModelForCausalLM.from_pretrained('THUDM/cogvlm-chat-hf', torch_dtype=torch.bfloat16, low_cpu_mem_usage=True, trust_remote_code=True)
         self.model.to(self.device).eval()
 
+        self.temp = temp
+        self.top_k = top_k
+        self.top_p = top_p
+        self.num_beams = num_beams
+        
         with open('human_attributes.json', 'r') as file:
             data = json.load(file)
 
@@ -22,7 +27,7 @@ class CaptionGeneration2:
         self.age_patterns = data['age_patterns']
     
     def generate_one_caption(self, image, prompt, temp, top_k, top_p, num_beams, min_length=0, max_length=20):
-        inputs = self.model.build_conversation_input_ids(self.tokenizer, query=prompt, history=[], images=[image])  # chat mode
+        inputs = self.model.build_conversation_input_ids(self.tokenizer, query=prompt, history=[], images=[image])
         
         inputs = {
             'input_ids': inputs['input_ids'].unsqueeze(0).to(self.device),
