@@ -3,7 +3,7 @@ import pandas as pd
 import re
 
 def preprocessing(dataset, num_ppl, seed):
-    dataset_path = os.path.join('/data/tyler/datasets', dataset) #change based on root directory
+    dataset_path = os.path.join('/home/tyler/datasets', dataset) #change based on root directory
     csv_path = find_file(dataset_path)
 
     print('Processing Data...')

@@ -29,18 +29,19 @@ def make_temp_dir(src, dst, cond=None):
     else:
         shutil.copytree(src, dst)
 
-def calculate_fid(base_images_path, generated_images_path):
+def calculate_fidelity(base_images_path, generated_images_path):
     fid_score = calculate_metrics(
         input1=base_images_path,
         input2=generated_images_path,
         cuda=True,
         isc=True,
         fid=True,
+        kid=True,
         verbose=False
     )
     return fid_score
 
-def bar_graph(file, metric):
+def bar_graph(file):
     df = pd.read_csv(file)
 
     scores = df['Cosine Avg'][df['is_human']]

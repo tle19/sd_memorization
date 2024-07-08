@@ -3,7 +3,6 @@ import argparse
 import pandas as pd
 import numpy as np
 import shutil
-import ast
 from transformers import set_seed
 from sklearn.metrics.pairwise import cosine_similarity
 from embedding import CLIPEmbed, DINOEmbed
@@ -54,8 +53,9 @@ temp_base = os.path.join(output_path, 'temp_base')
 make_temp_dir(base_images, temp_base, cond)
 
 cosine_scores = []
-fid_scores = []
 isc_scores = []
+fid_scores = []
+kid_scores = []
 
 for i in range(num_iters):
     generated_images = os.path.join(output_path, f'generated_images_{i}')
@@ -64,9 +64,8 @@ for i in range(num_iters):
     temp_gen = os.path.join(output_path, 'temp_gen')
     make_temp_dir(generated_images, temp_gen, cond)
 
-    fid_and_isc = calculate_fid(temp_base, temp_gen)
-    isc_batch_scores = fid_and_isc['inception_score_mean']
-    fid_batch_scores = fid_and_isc['frechet_inception_distance']
+    fidelity = calculate_fidelity(temp_base, temp_gen)
+
     cos_batch_scores = []
 
     print(f'\n\033[1m  BATCH {i}:\033[0m')
@@ -90,8 +89,9 @@ for i in range(num_iters):
     shutil.rmtree(temp_gen)
 
     cosine_scores.append(cos_batch_scores)
-    fid_scores.append(fid_batch_scores)
-    isc_scores.append(isc_batch_scores)
+    isc_scores.append(fidelity['inception_score_mean'])
+    fid_scores.append(fidelity['frechet_inception_distance'])
+    kid_scores.append(fidelity['kernel_inception_distance_mean'])
 
 shutil.rmtree(temp_base)
 
@@ -99,10 +99,12 @@ cosine_scores = np.array(cosine_scores).T
 prompts_df['Cosine Avg'] = np.mean(cosine_scores, axis=1)
 for i, score in enumerate(cosine_scores):
     prompts_df.loc[i, 'Cosine'] = str(score)
-prompts_df['FID Avg'] = np.mean(fid_scores)
-prompts_df['FID'] = str(fid_scores)
 prompts_df['IS Avg'] = np.mean(isc_scores)
 prompts_df['IS'] = str(isc_scores)
+prompts_df['FID Avg'] = np.mean(fid_scores)
+prompts_df['FID'] = str(fid_scores)
+prompts_df['KID Avg'] = np.mean(kid_scores)
+prompts_df['KID'] = str(kid_scores)
 
 prompts_df.to_csv(csv_path, index=False)
 
@@ -111,5 +113,6 @@ cosine_avg = prompts_df['Cosine Avg'][prompts_df['is_human']]
 # Printed Metrics
 print('\n\033[1mMetrics\033[0m')
 print(f'Cosine Score: {np.mean(cosine_avg)}')
-print(f'FID Score: {np.mean(fid_scores)}')
 print(f'IS Score: {np.mean(isc_scores)}')
+print(f'FID Score: {np.mean(fid_scores)}')
+print(f'KID Score: {np.mean(kid_scores)}')
