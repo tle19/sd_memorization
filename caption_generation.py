@@ -79,6 +79,10 @@ class CaptionGeneration:
             if is_human[-1]:
                 text = self.additional_attributes(image, text)
 
+            # for upper bounding
+            # text = f'{prompt}, {text}'
+            # text = prompt
+
             generated_captions.append(text)
 
             print_title('PROMPT', prompt, index)

@@ -1,7 +1,7 @@
 import torch
 from PIL import Image
 from transformers import CLIPModel, CLIPProcessor
-from transformers import ViTImageProcessor, ViTModel
+from transformers import AutoModel, AutoImageProcessor
 
 class Embed:
     def __init__(self, cuda):
@@ -34,8 +34,8 @@ class CLIPEmbed(Embed):
 class DINOEmbed(Embed):
     def __init__(self, cuda):
         super().__init__(cuda)
-        self.model = ViTModel.from_pretrained("facebook/dino-vitb16")
-        self.processor = ViTImageProcessor.from_pretrained("facebook/dino-vitb16")
+        self.model = AutoModel.from_pretrained('facebook/dinov2-base') # change to large/giant for increased score
+        self.processor = AutoImageProcessor.from_pretrained('facebook/dinov2-base')
     
     def process_image(self, image):
         image = image.convert("RGB").resize((384, 384))

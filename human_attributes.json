@@ -1,16 +1,23 @@
 {
     "human_nouns": [
         "man", "men", "woman", "women", "boy", "boys", "girl", "girls", "male", "males", "female", "females",
-        "gentleman", "gentlemen", "lady", "ladies", "guy", "gal", "guys", "gals",
-        "adult", "adults", "teen", "teens", "child", "children", "baby", "babies",
-        "person", "people", "actor", "actress", "singer", "singers", "player", "players"
+        "gentleman", "gentlemen", "lady", "ladies", "guy", "gal", "guys", "gals", "wife", "wives", "husband", "husbands",
+        "adult", "adults", "teen", "teens", "child", "children", "baby", "babies", "me", "person", "people", 
+        "actor", "actress", "singer", "singers", "player", "players", "individual", "individuals", "parent", "parents",
+        "friend", "friends", "neighbor", "neighbors", "colleague", "colleagues", "student", "students", "teacher", "teachers",
+        "doctor", "doctors", "nurse", "nurses", "worker", "workers", "boss", "bosses", "employee", "employees",
+        "client", "clients", "customer", "customers", "stranger", "strangers", "relative", "relatives",
+        "child", "children", "baby", "babies", "toddler", "toddlers", "teenager", "teenagers", "youngster", "youngsters",
+        "senior", "seniors", "elder", "elders", "adult", "adults"
     ],
+
     "ethnicity_lexicon": [
         "white", "black", "caucasian", "latino", "latina",
         "indigenous", "pacific islander", "middle eastern",
         "jew", "romani", "persian", "polynesian", "chicano",
         "eskimo", "somoan", "biracial", "mixed"
     ],
+    
     "age_patterns": [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
         "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "eightteen", "nineteen",

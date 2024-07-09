@@ -1,9 +1,9 @@
-diffusers==0.28.0
-numpy==2.0.0
+diffusers==0.29.2
+matplotlib==3.5.1
 pandas==2.2.2
-Pillow==10.3.0
-scikit_learn==1.5.0
+Pillow==10.4.0
+scikit_learn==1.5.1
 spacy==3.7.5
 torch==2.3.1
 torch_fidelity==0.3.0
-transformers==4.41.2
+transformers==4.42.3
