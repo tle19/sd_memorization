@@ -80,7 +80,7 @@ class CaptionGeneration:
                 text = self.additional_attributes(image, text)
 
             # for upper bounding
-            # text = f'{prompt}, {text}'
+            text = f'{prompt}, {text}'
             # text = prompt
 
             generated_captions.append(text)
