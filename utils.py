@@ -36,7 +36,7 @@ def calculate_fidelity(base_images_path, generated_images_path):
         cuda=True,
         isc=True,
         fid=True,
-        # kid=True,
+        kid=True,
         verbose=False
     )
     return fid_score

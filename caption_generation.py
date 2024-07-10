@@ -66,9 +66,9 @@ class CaptionGeneration:
             image = Image.open(image_path)
 
             pre_prompt = "this is a picture of"
-            text = self.generate_one_caption(
-                image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
-            )
+            # text = self.generate_one_caption(
+            #     image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
+            # )
 
             # check if caption defines a human
             if any(word in self.human_nouns for word in text.split()):
@@ -76,12 +76,12 @@ class CaptionGeneration:
             else:
                 is_human.append(False)
             
-            if is_human[-1]:
-                text = self.additional_attributes(image, text)
+            # if is_human[-1]:
+            #     text = self.additional_attributes(image, text)
 
             # for upper bounding
-            text = f'{prompt}, {text}'
-            # text = prompt
+            # text = f'{prompt}, {text}'
+            text = prompt
 
             generated_captions.append(text)
 
