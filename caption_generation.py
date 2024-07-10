@@ -81,7 +81,7 @@ class CaptionGeneration:
 
             # for upper bounding
             # text = f'{prompt}, {text}'
-            # text = prompt
+            text = prompt
 
             generated_captions.append(text)
 
