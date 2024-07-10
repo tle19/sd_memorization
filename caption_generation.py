@@ -64,17 +64,17 @@ class CaptionGeneration:
         for index, prompt in enumerate(prompts):
             image_path = os.path.join(path, prompt + '.png')
             image = Image.open(image_path)
-
-            pre_prompt = "this is a picture of"
+            
+            # pre_prompt = "this is a picture of"
             # text = self.generate_one_caption(
             #     image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
             # )
 
-            # check if caption defines a human
-            if any(word in self.human_nouns for word in text.split()):
-                is_human.append(True)
-            else:
-                is_human.append(False)
+            # # check if caption defines a human
+            # if any(word in self.human_nouns for word in text.split()):
+            #     is_human.append(True)
+            # else:
+            #     is_human.append(False)
             
             # if is_human[-1]:
             #     text = self.additional_attributes(image, text)
