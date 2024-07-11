@@ -38,7 +38,7 @@ class DINOEmbed(Embed):
         self.processor = AutoImageProcessor.from_pretrained('facebook/dinov2-base')
     
     def process_image(self, image):
-        image = image.convert("RGB").resize((384, 384))
+        image = image.convert("RGB").resize((224, 224))
         return image
 
     def compute_image_feature(self, inputs):
