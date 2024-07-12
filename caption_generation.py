@@ -26,8 +26,8 @@ class CaptionGeneration:
         self.blip_questions = {
             # 'Question: What is their hair color? Answer:': "black",
             # 'Question: What is their eye color? Answer:': "brown",
-            'Question: What is their ethnicity? Answer:': "white",
-            # 'Question: What is their approximate age? Answer:': "35"
+            # 'Question: What is their ethnicity? Answer:': "white",
+            'Question: What is their approximate age? Answer:': "35"
         }
 
         with open('human_attributes.json', 'r') as file:
@@ -123,7 +123,7 @@ class CaptionGeneration:
         # text = self.add_attribute(text, hair_and_eyes, True)
         # text = self.add_attribute(text, age_and_ethnicity)
         text = self.add_attribute(text, answers[0])
-        
+
         return text
   
     def extract_color(self, text):
