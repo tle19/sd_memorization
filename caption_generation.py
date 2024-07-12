@@ -66,12 +66,12 @@ class CaptionGeneration:
             image = Image.open(image_path)
 
             # for upper bounding
-            text = prompt
+            # text = prompt
 
-            # pre_prompt = "this is a picture of"
-            # text = self.generate_one_caption(
-            #     image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
-            # )
+            pre_prompt = "this is a picture of"
+            text = self.generate_one_caption(
+                image, pre_prompt, self.temp, self.top_k, self.top_p, self.num_beams, min_length=30, max_length=40
+            )
 
             # check if caption defines a human
             if any(word in self.human_nouns for word in text.split()):
