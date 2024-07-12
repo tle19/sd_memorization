@@ -24,10 +24,10 @@ class CaptionGeneration:
         self.nlp = spacy.load('en_core_web_md')
 
         self.blip_questions = {
-            # 'Question: What is their hair color? Answer:': "black",
+            'Question: What is their hair color? Answer:': "black",
             # 'Question: What is their eye color? Answer:': "brown",
             # 'Question: What is their ethnicity? Answer:': "white",
-            'Question: What is their approximate age? Answer:': "35"
+            # 'Question: What is their approximate age? Answer:': "35"
         }
 
         with open('human_attributes.json', 'r') as file:
