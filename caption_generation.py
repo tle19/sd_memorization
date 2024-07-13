@@ -25,9 +25,9 @@ class CaptionGeneration:
 
         self.blip_questions = {
             'Question: What is their hair color? Answer:': "black",
-            # 'Question: What is their eye color? Answer:': "brown",
-            # 'Question: What is their ethnicity? Answer:': "white",
-            # 'Question: What is their approximate age? Answer:': "35"
+            'Question: What is their eye color? Answer:': "brown",
+            'Question: What is their ethnicity? Answer:': "white",
+            'Question: What is their approximate age? Answer:': "35"
         }
 
         with open('human_attributes.json', 'r') as file:
@@ -117,12 +117,12 @@ class CaptionGeneration:
 
             answers.append(answer)
 
-        # hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-        # age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
+        hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
+        age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
         
-        # text = self.add_attribute(text, hair_and_eyes, True)
-        # text = self.add_attribute(text, age_and_ethnicity)
-        text = self.add_attribute(text, answers[0])
+        text = self.add_attribute(text, hair_and_eyes, True)
+        text = self.add_attribute(text, age_and_ethnicity)
+        # text = self.add_attribute(text, answers[0])
 
         return text
   
