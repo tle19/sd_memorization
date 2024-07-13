@@ -122,7 +122,7 @@ class CaptionGeneration:
         
         # text = self.add_attribute(text, hair_and_eyes, True)
         # text = self.add_attribute(text, age_and_ethnicity)
-        text = self.add_attribute(text, f'with {answers[0]} eyes')
+        text = self.add_attribute(text, f'with {answers[0]} eyes', True)
 
         return text
   
