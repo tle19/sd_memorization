@@ -54,8 +54,8 @@ temp_base = os.path.join(output_path, 'temp_base')
 make_temp_dir(base_images, temp_base, dataset, cond)
 
 # for lower bounding
-shuffled_names = names[:]
-random.shuffle(shuffled_names)
+# shuffled_names = names[:]
+# random.shuffle(shuffled_names)
 
 cos_scores = []
 isc_scores = []

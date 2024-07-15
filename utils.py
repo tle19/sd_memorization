@@ -46,7 +46,7 @@ def hist_graph(file):
 
     scores = df['Cosine Avg'][df['is_human']]
 
-    plt.hist(scores, bins=30, color='blue', edgecolor='black')
+    plt.hist(scores, bins=20, color='blue', edgecolor='black')
     plt.xlabel(f'{scores.name} Score')
     plt.ylabel(f'Number of People')
     plt.title(f'{scores.name} Score Distribution')
