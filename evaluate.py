@@ -54,8 +54,8 @@ temp_base = os.path.join(output_path, 'temp_base')
 make_temp_dir(base_images, temp_base, dataset, cond)
 
 # for lower bounding
-shuffled_names = names[:]
-random.shuffle(shuffled_names)
+# shuffled_names = names[:]
+# random.shuffle(shuffled_names)
 
 cos_scores = []
 isc_scores = []
@@ -72,8 +72,8 @@ for i in range(num_iters):
     temp_gen = os.path.join(output_path, 'temp_gen')
     make_temp_dir(generated_images, temp_gen, dataset, cond)
 
-    fidelity = calculate_fidelity(temp_base, temp_gen)
-    fidelity_h = calculate_fidelity(base_images, generated_images)
+    # fidelity = calculate_fidelity(temp_base, temp_gen)
+    # fidelity_h = calculate_fidelity(base_images, generated_images)
 
     cos_batch_scores = []
 
@@ -83,10 +83,10 @@ for i in range(num_iters):
     for index, name in enumerate(names):
         print_title('IMAGE', name, index) 
         x = os.path.join(base_images, name + '.png')
-        # y = os.path.join(generated_images, name + '.png')
+        y = os.path.join(generated_images, name + '.png')
 
         # for lower bounding
-        y = os.path.join(generated_images, shuffled_names[index] + '.png')
+        # y = os.path.join(generated_images, shuffled_names[index] + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)
@@ -97,13 +97,13 @@ for i in range(num_iters):
     shutil.rmtree(temp_gen)
 
     cos_scores.append(cos_batch_scores)
-    isc_scores.append(fidelity['inception_score_mean'])
-    fid_scores.append(fidelity['frechet_inception_distance'])
-    kid_scores.append(fidelity['kernel_inception_distance_mean'])
+    # isc_scores.append(fidelity['inception_score_mean'])
+    # fid_scores.append(fidelity['frechet_inception_distance'])
+    # kid_scores.append(fidelity['kernel_inception_distance_mean'])
 
-    isc_h_scores.append(fidelity_h['inception_score_mean'])
-    fid_h_scores.append(fidelity_h['frechet_inception_distance'])
-    kid_h_scores.append(fidelity_h['kernel_inception_distance_mean'])
+    # isc_h_scores.append(fidelity_h['inception_score_mean'])
+    # fid_h_scores.append(fidelity_h['frechet_inception_distance'])
+    # kid_h_scores.append(fidelity_h['kernel_inception_distance_mean'])
 
 shutil.rmtree(temp_base)
 
@@ -112,19 +112,19 @@ prompts_df['Cosine Avg'] = np.mean(cos_scores, axis=1)
 for i, score in enumerate(cos_scores):
     prompts_df.loc[i, 'Cosine'] = str(score)
 
-prompts_df['IS Avg'] = np.mean(isc_scores)
-prompts_df['IS'] = str(isc_scores)
-prompts_df['FID Avg'] = np.mean(fid_scores)
-prompts_df['FID'] = str(fid_scores)
-prompts_df['KID Avg'] = np.mean(kid_scores)
-prompts_df['KID'] = str(kid_scores)
+# prompts_df['IS Avg'] = np.mean(isc_scores)
+# prompts_df['IS'] = str(isc_scores)
+# prompts_df['FID Avg'] = np.mean(fid_scores)
+# prompts_df['FID'] = str(fid_scores)
+# prompts_df['KID Avg'] = np.mean(kid_scores)
+# prompts_df['KID'] = str(kid_scores)
 
-prompts_df['IS Avg'] = np.mean(isc_h_scores)
-prompts_df['IS'] = str(isc_h_scores)
-prompts_df['FID Avg'] = np.mean(fid_h_scores)
-prompts_df['FID'] = str(fid_h_scores)
-prompts_df['KID Avg'] = np.mean(kid_h_scores)
-prompts_df['KID'] = str(kid_h_scores)
+# prompts_df['IS Avg'] = np.mean(isc_h_scores)
+# prompts_df['IS'] = str(isc_h_scores)
+# prompts_df['FID Avg'] = np.mean(fid_h_scores)
+# prompts_df['FID'] = str(fid_h_scores)
+# prompts_df['KID Avg'] = np.mean(kid_h_scores)
+# prompts_df['KID'] = str(kid_h_scores)
 
 prompts_df.to_csv(csv_path, index=False)
 
@@ -134,12 +134,12 @@ cosine_h_avg = prompts_df['Cosine Avg'][prompts_df['is_human']]
 # Printed Metrics
 print('\n\033[1mMetrics (all) \033[0m')
 print(f'Cosine Score: {np.mean(cosine_avg)}')
-print(f'IS Score: {np.mean(isc_scores)}')
-print(f'FID Score: {np.mean(fid_scores)}')
-print(f'KID Score: {np.mean(kid_scores)}')
+# print(f'IS Score: {np.mean(isc_scores)}')
+# print(f'FID Score: {np.mean(fid_scores)}')
+# print(f'KID Score: {np.mean(kid_scores)}')
 
 print('\n\033[1mMetrics (is_human)\033[0m')
 print(f'Cosine Score: {np.mean(cosine_h_avg)}')
-print(f'IS Score: {np.mean(isc_h_scores)}')
-print(f'FID Score: {np.mean(fid_h_scores)}')
-print(f'KID Score: {np.mean(kid_h_scores)}')
+# print(f'IS Score: {np.mean(isc_h_scores)}')
+# print(f'FID Score: {np.mean(fid_h_scores)}')
+# print(f'KID Score: {np.mean(kid_h_scores)}')
