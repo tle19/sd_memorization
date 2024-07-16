@@ -78,9 +78,9 @@ class CaptionGeneration:
             
             if is_human[-1]:
                 text = self.additional_attributes(image, text)
-            
-            # for upper bounding
-            # text = f'{prompt}, {text}' 
+
+            #upper bound
+            text = f'{prompt}, {text}'
 
             generated_captions.append(text)
 
@@ -122,7 +122,6 @@ class CaptionGeneration:
         
         text = self.add_attribute(text, hair_and_eyes, True)
         text = self.add_attribute(text, age_and_ethnicity)
-        # text = self.add_attribute(text, f'with {answers[0]}')
 
         return text
   

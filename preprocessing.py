@@ -17,9 +17,6 @@ def preprocessing(dataset, num_ppl, seed):
 
     df = df.rename(columns={original_name: 'Name'})
     df = df[['Name']]
-    
-    # for selecting particular time periods
-    # df = df[['birthYear'] >= 1980 & ['birthYear'] <= 2000]
 
     df = df.drop_duplicates(subset='Name', keep='first')
     df = df[df['Name'].apply(is_english)]

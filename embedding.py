@@ -34,11 +34,11 @@ class CLIPEmbed(Embed):
 class DINOEmbed(Embed):
     def __init__(self, cuda):
         super().__init__(cuda)
-        self.model = AutoModel.from_pretrained('facebook/dinov2-base')
-        self.processor = AutoImageProcessor.from_pretrained('facebook/dinov2-base')
+        self.model = AutoModel.from_pretrained('facebook/dino-vits16')
+        self.processor = AutoImageProcessor.from_pretrained('facebook/dino-vits16')
     
     def process_image(self, image):
-        image = image.convert("RGB").resize((504, 504))
+        image = image.convert("RGB").resize((384, 384))
         return image
 
     def compute_image_feature(self, inputs):
