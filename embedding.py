@@ -34,8 +34,8 @@ class CLIPEmbed(Embed):
 class DINOEmbed(Embed):
     def __init__(self, cuda):
         super().__init__(cuda)
-        self.model = AutoModel.from_pretrained('facebook/dino-vits16')
-        self.processor = AutoImageProcessor.from_pretrained('facebook/dino-vits16')
+        self.model = AutoModel.from_pretrained('facebook/dino-vitb16')
+        self.processor = AutoImageProcessor.from_pretrained('facebook/dino-vitb16')
     
     def process_image(self, image):
         image = image.convert("RGB").resize((384, 384))
