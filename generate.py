@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--num_steps', type=int, default=50)
     parser.add_argument('--prompt', type=str, default='')
     parser.add_argument('--cuda', type=str, default='cuda')
-    parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--seed', type=int, default=42) #change to default=None later
     args = parser.parse_args()
     return args
 
