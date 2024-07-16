@@ -54,8 +54,8 @@ temp_base = os.path.join(output_path, 'temp_base')
 make_temp_dir(base_images, temp_base, dataset, cond)
 
 # for lower bounding
-shuffled_names = names[:]
-random.shuffle(shuffled_names)
+# shuffled_names = names[:]
+# random.shuffle(shuffled_names)
 
 cos_scores = []
 isc_scores = []
@@ -86,7 +86,7 @@ for i in range(num_iters):
         y = os.path.join(generated_images, name + '.png')
 
         # for lower bounding
-        y = os.path.join(generated_images, shuffled_names[index] + '.png')
+        # y = os.path.join(generated_images, shuffled_names[index] + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)
