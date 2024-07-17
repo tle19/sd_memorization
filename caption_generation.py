@@ -24,9 +24,9 @@ class CaptionGeneration:
         self.nlp = spacy.load('en_core_web_md')
 
         self.blip_questions = {
-            'Question: What is their hair color? Answer:': "black",
-            'Question: What is their eye color? Answer:': "brown",
-            'Question: What is their ethnicity? Answer:': "white",
+            # 'Question: What is their hair color? Answer:': "black",
+            # 'Question: What is their eye color? Answer:': "brown",
+            # 'Question: What is their ethnicity? Answer:': "white",
             'Question: What is their approximate age? Answer:': "35"
         }
 
@@ -117,10 +117,11 @@ class CaptionGeneration:
 
             answers.append(answer)
 
-        hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
-        age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
+        # hair_and_eyes = f'with {answers[0]} hair and {answers[1]} eyes'
+        # age_and_ethnicity = f'{answers[3]} year old {answers[2]}'
+        age_and_ethnicity = f'{answers[0]} year old'
         
-        text = self.add_attribute(text, hair_and_eyes, True)
+        # text = self.add_attribute(text, hair_and_eyes, True)
         text = self.add_attribute(text, age_and_ethnicity)
 
         return text
