@@ -86,7 +86,7 @@ for i in range(num_iters):
         y = os.path.join(generated_images, name + '.png')
 
         # for lower bounding
-        y = os.path.join(generated_images, shuffled_names[index] + '.png')
+        # y = os.path.join(generated_images, shuffled_names[index] + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)

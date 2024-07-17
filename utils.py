@@ -41,17 +41,29 @@ def calculate_fidelity(base_images_path, generated_images_path):
     )
     return fid_score
 
-def hist_graph(file):
+def bar_graph(file):
     df = pd.read_csv(file)
 
     scores = df['Cosine Avg']
-    # scores = df['Cosine Avg'][df['is_human']]
 
     plt.hist(scores, bins=20, color='blue', edgecolor='black')
     plt.xlabel(f'{scores.name} Score')
     plt.ylabel(f'Number of People')
     plt.title(f'{scores.name} Score Distribution')
     plt.show()
+
+# additional plots for paper
+def hist_graph():
+    scores = [0.51, 0.61, 0.63, 0.58, 0.55]
+    features = ['None', 'Ethnicity', 'Age', 'Hair Color', 'Eye Color']
+
+    plt.bar(features, scores, color='blue', edgecolor='black')
+    plt.xlabel(f'Features')
+    plt.ylabel(f'Cosine Similarity (CLIP image embedding)')
+    plt.title(f'Performance of Features')
+    plt.ylim(0.4, 0.7)
+    plt.show()
+
 
 def plot_time_periods():
     scores = [0.665, 0.661, 0.655, 0.653, 0.645, 0.640, 0.634, 0.633, 0.629]
