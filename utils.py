@@ -52,19 +52,7 @@ def bar_graph(file):
     plt.title(f'{scores.name} Score Distribution')
     plt.show()
 
-# additional plots for paper
-def hist_graph():
-    scores = [0.51, 0.61, 0.63, 0.58, 0.55]
-    features = ['None', 'Ethnicity', 'Age', 'Hair Color', 'Eye Color']
-
-    plt.bar(features, scores, color='blue', edgecolor='black')
-    plt.xlabel(f'Features')
-    plt.ylabel(f'Cosine Similarity (CLIP image embedding)')
-    plt.title(f'Performance of Features')
-    plt.ylim(0.4, 0.7)
-    plt.show()
-
-
+# additional plot for paper
 def plot_time_periods():
     scores = [0.665, 0.661, 0.655, 0.653, 0.645, 0.640, 0.634, 0.633, 0.629]
     years = ['2000-2020', '1980-2000', '1960-1980', '1940-1960', '1920-1940', '1900-1920', '1880-1900', '1860-1880', '1840-1860']
