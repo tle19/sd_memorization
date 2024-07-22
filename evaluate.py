@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--folder', type=str, default="imdb_0")
     parser.add_argument('--cuda', type=str, default='cuda')
-    parser.add_argument('--seed', type=int, default=42) #change to default=None later
+    parser.add_argument('--seed', type=int, default=None)
     args = parser.parse_args()
     return args
 
@@ -53,10 +53,6 @@ cond = prompts_df['Name'][prompts_df['is_human']]
 temp_base = os.path.join(output_path, 'temp_base')
 make_temp_dir(base_images, temp_base, dataset, cond)
 
-# for lower bounding
-# shuffled_names = names[:]
-# random.shuffle(shuffled_names)
-
 cos_scores = []
 isc_scores = []
 fid_scores = []
@@ -84,9 +80,6 @@ for i in range(num_iters):
         print_title('IMAGE', name, index) 
         x = os.path.join(base_images, name + '.png')
         y = os.path.join(generated_images, name + '.png')
-
-        # for lower bounding
-        # y = os.path.join(generated_images, shuffled_names[index] + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)
