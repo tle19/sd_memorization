@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('--model', type=str, default='clip')
     parser.add_argument('--folder', type=str, default="imdb_0")
     parser.add_argument('--cuda', type=str, default='cuda')
-    parser.add_argument('--seed', type=int, default=None)
+    parser.add_argument('--seed', type=int, default=42)
     args = parser.parse_args()
     return args
 
@@ -83,7 +83,7 @@ for i in range(num_iters):
         print_title('IMAGE', name, index) 
         x = os.path.join(base_images, name + '.png')
         y = os.path.join(generated_images, name + '.png')
-        
+
         y = os.path.join(generated_images, shuffled_names[index] + '.png')
 
         features_x = model.image_feature(x)
