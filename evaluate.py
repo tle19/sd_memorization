@@ -61,6 +61,9 @@ isc_h_scores = []
 fid_h_scores = []
 kid_h_scores = []
 
+shuffled_names = names[:]
+random.shuffle(shuffled_names)
+
 for i in range(num_iters):
     generated_images = os.path.join(output_path, f'generated_images_{i}')
 
@@ -80,6 +83,8 @@ for i in range(num_iters):
         print_title('IMAGE', name, index) 
         x = os.path.join(base_images, name + '.png')
         y = os.path.join(generated_images, name + '.png')
+        
+        y = os.path.join(generated_images, shuffled_names[index] + '.png')
 
         features_x = model.image_feature(x)
         features_y = model.image_feature(y)
